@@ -1,9 +1,15 @@
 import { NoteDto } from "../../Domain/DTOs/notes/NoteDto";
 import { INotesRepository } from "../../Domain/repositories/notes/INotesRepository";
 import { INoteService } from "../../Domain/services/notes/INoteService";
+import { Note } from "../../Domain/models/Note";
 
-export class NoteService implements INoteService{
-    constructor(private notesRepository: INotesRepository) {}
+export class NoteService implements INoteService {
+    constructor(private notesRepository: INotesRepository) { }
+    async createNote(note: NoteDto): Promise<NoteDto> {
+        const createdNote = await this.notesRepository.create(new Note(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id));
+
+        return new NoteDto(createdNote.id, createdNote.title, createdNote.content, createdNote.image_url, createdNote.is_pinned, createdNote.owner_id);
+    }
 
     async getAllUserNotes(ownerId: number): Promise<NoteDto[]> {
         const notes = await this.notesRepository.getByUserId(ownerId);
