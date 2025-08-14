@@ -6,4 +6,5 @@ export interface INotesRepository{
       getByUserId(ownerId: number): Promise<Note[]>;
       delete(id: number):  Promise<boolean>;
       getUserNoteCount(ownerId: number): Promise<number>;
+      update(note: Note): Promise<Note>;
 }

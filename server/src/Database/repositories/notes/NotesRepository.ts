@@ -4,13 +4,34 @@ import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
 
 export class NotesRepository implements INotesRepository {
+    async update(note: Note): Promise<Note> {
+        try {
+            const query = `
+        UPDATE notes 
+        SET title = ?, content = ?, image_url = ?, is_pinned = ?
+        WHERE id = ?
+      `;
+            const [result] = await db.execute<ResultSetHeader>(query, [
+                note.title,
+                note.content,
+                note.image_url,
+                note.is_pinned,
+                note.id
+            ]);
+            if (result.affectedRows > 0) {
+                return note;
+            }
+            return new Note();
+        } catch (error) {
+            return new Note();
+        }
+    }
     async getUserNoteCount(ownerId: number): Promise<number> {
         try {
             const query = `SELECT COUNT(*) AS noteCount FROM notes WHERE owner_id = ?`;
             const [rows] = await db.execute<RowDataPacket[]>(query, [ownerId]);
             return rows[0].noteCount;
         } catch (error) {
-            console.error('Error creating note:', error);
             return -1;
         }
     }

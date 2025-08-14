@@ -5,6 +5,14 @@ import { Note } from "../../Domain/models/Note";
 
 export class NoteService implements INoteService {
     constructor(private notesRepository: INotesRepository) { }
+    async updateNote(note: NoteDto): Promise<NoteDto> {
+        const updatedNote = await this.notesRepository.update(
+            new Note(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id)
+        );
+
+        return new NoteDto(updatedNote.id, updatedNote.title, updatedNote.content, updatedNote.image_url, updatedNote.is_pinned, updatedNote.owner_id);
+    }
+
     async getUserNoteCount(ownerId: number): Promise<number> {
         return await this.notesRepository.getUserNoteCount(ownerId);
     }

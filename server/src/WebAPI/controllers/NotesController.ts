@@ -18,7 +18,47 @@ export class NotesController {
     this.router.post('/note', authenticate, this.create.bind(this));
     this.router.get('/notes', authenticate, this.getAllUserNotes.bind(this));
     this.router.delete('/notes/:id', authenticate, this.delete.bind(this));
+    this.router.put('/notes/:id', authenticate, this.update.bind(this));
   }
+
+  /**
+     * PUT /api/v1/notes/:id
+     * Azurira postojecu belesku
+     */
+  private async update(req: Request, res: Response): Promise<void> {
+    try {
+      const id = parseInt(req.params.id);
+      const { title, content, image_url, is_pinned } = req.body;
+
+      if (!id || !title || !content || is_pinned == null) {
+        res.status(400).json({ success: false, message: 'Nevalidni podaci za ažuriranje.' });
+        return;
+      }
+      
+      //validacija podataka da li su tacni
+       if (ValidateNewNote(title, content).uspesno == false) {
+        res.status(400).json({ success: false, message: 'Naslov i beleska su obavezna polja za unos.' });
+        return;
+      }
+      //validacija da user ne sme da salje image_url
+      const finalImageUrl = req.user!.uloga === 'admin' ? image_url || null : null;
+      const ownerId = req.user!.id;
+
+      const updatedNote = await this.notesService.updateNote(new NoteDto(id, title, content, finalImageUrl, is_pinned, ownerId));
+
+      if (updatedNote.id !== 0) {
+        res.status(200).json({ success: true, message: 'Beleska je uspesno azurirana.', data: updatedNote });
+      } else {
+        res.status(404).json({ success: false, message: 'Beleska nije pronadjena.' });
+      }
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: error instanceof Error ? error.message : String(error) 
+    });
+    }
+  }
+
   /**
    * DELETE /api/v1/notes/:id
    * Briše belesku
@@ -67,7 +107,7 @@ export class NotesController {
           res.status(500).json({ success: false, message: 'Neuspesno prebrojavanje beleski korisnika, kreiranje nije uspelo' });
           return;
         }
-        if(noteCount >= 10){
+        if (noteCount >= 10) {
           res.status(403).json({ success: false, message: 'Korisnik vec ima 10 kreiranih beleski' });
           return;
         }

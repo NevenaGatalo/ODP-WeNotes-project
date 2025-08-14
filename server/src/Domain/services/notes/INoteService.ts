@@ -6,4 +6,5 @@ export interface INoteService{
     getAllUserNotes(ownerId: number): Promise<NoteDto[]>;
     deleteNote(id: number): Promise<boolean>;
     getUserNoteCount(ownerId: number): Promise<number>;
+    updateNote(note: NoteDto): Promise<NoteDto>;
 }
