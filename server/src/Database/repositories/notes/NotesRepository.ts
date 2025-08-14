@@ -4,6 +4,16 @@ import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
 
 export class NotesRepository implements INotesRepository {
+    async getUserNoteCount(ownerId: number): Promise<number> {
+        try {
+            const query = `SELECT COUNT(*) AS noteCount FROM notes WHERE owner_id = ?`;
+            const [rows] = await db.execute<RowDataPacket[]>(query, [ownerId]);
+            return rows[0].noteCount;
+        } catch (error) {
+            console.error('Error creating note:', error);
+            return -1;
+        }
+    }
     async create(note: Note): Promise<Note> {
         try {
             const query = `
@@ -46,18 +56,29 @@ export class NotesRepository implements INotesRepository {
             return new Note();
         }
     }
-    async getByUserId(ownerId: number): Promise<Note[]>{
-        try{
+    async getByUserId(ownerId: number): Promise<Note[]> {
+        try {
             const query = 'SELECT * FROM notes WHERE owner_id = ?';
             const [rows] = await db.execute<RowDataPacket[]>(query, [ownerId]);
 
-            if(rows.length > 0){
+            if (rows.length > 0) {
                 return rows.map(row => new Note(row.id, row.title, row.content, row.image_url, row.is_pinned, row.owner_id));
             }
             return [];
-        }catch{
+        } catch {
             return [];
         }
     }
-
+    async delete(id: number): Promise<boolean> {
+        try {
+            const query = `
+        DELETE FROM notes 
+        WHERE id = ?
+      `;
+            const [result] = await db.execute<ResultSetHeader>(query, [id]);
+            return result.affectedRows > 0;
+        } catch (error) {
+            return false;
+        }
+    }
 }

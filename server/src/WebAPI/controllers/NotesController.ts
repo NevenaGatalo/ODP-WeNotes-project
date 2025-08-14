@@ -3,6 +3,7 @@ import { INoteService } from "../../Domain/services/notes/INoteService";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { ValidateNewNote } from "../validators/notes/NewNoteValidator";
 import { NoteDto } from "../../Domain/DTOs/notes/NoteDto";
+import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 
 export class NotesController {
   private router: Router;
@@ -16,8 +17,32 @@ export class NotesController {
   private initializeRoutes(): void {
     this.router.post('/note', authenticate, this.create.bind(this));
     this.router.get('/notes', authenticate, this.getAllUserNotes.bind(this));
+    this.router.delete('/notes/:id', authenticate, this.delete.bind(this));
   }
+  /**
+   * DELETE /api/v1/notes/:id
+   * Briše belesku
+   */
+  private async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const id = parseInt(req.params.id);
 
+      if (!id) {
+        res.status(400).json({ success: false, message: 'Nevalidan ID.' });
+        return;
+      }
+
+      const success = await this.notesService.deleteNote(id);
+
+      if (success) {
+        res.status(200).json({ success: true, message: 'Beleska uspesno obrisana.' });
+      } else {
+        res.status(404).json({ success: false, message: 'Beleska nije pronadjena.' });
+      }
+    } catch (error) {
+      res.status(500).json({ success: false, message: error });
+    }
+  }
   /**
      * POST /api/v1/note
      * Kreira novi note
@@ -34,6 +59,19 @@ export class NotesController {
       //validacija da user ne sme da salje image_url
       const finalImageUrl = req.user!.uloga === 'admin' ? image_url || null : null;
       const ownerId = req.user!.id;
+
+      //validacija user ne sme da kreira vise od 10 beleski
+      if (req.user!.uloga === 'user') {
+        const noteCount = await this.notesService.getUserNoteCount(ownerId);
+        if (noteCount == -1) {
+          res.status(500).json({ success: false, message: 'Neuspesno prebrojavanje beleski korisnika, kreiranje nije uspelo' });
+          return;
+        }
+        if(noteCount >= 10){
+          res.status(403).json({ success: false, message: 'Korisnik vec ima 10 kreiranih beleski' });
+          return;
+        }
+      }
 
       const noteDto = new NoteDto(0, title, content, finalImageUrl, false, ownerId);
       const createdNote = await this.notesService.createNote(noteDto);

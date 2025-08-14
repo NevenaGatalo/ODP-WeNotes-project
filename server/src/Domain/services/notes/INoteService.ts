@@ -4,4 +4,6 @@ import { Note } from "../../models/Note";
 export interface INoteService{
     createNote(note: NoteDto): Promise<NoteDto>;
     getAllUserNotes(ownerId: number): Promise<NoteDto[]>;
+    deleteNote(id: number): Promise<boolean>;
+    getUserNoteCount(ownerId: number): Promise<number>;
 }

@@ -5,6 +5,10 @@ import { Note } from "../../Domain/models/Note";
 
 export class NoteService implements INoteService {
     constructor(private notesRepository: INotesRepository) { }
+    async getUserNoteCount(ownerId: number): Promise<number> {
+        return await this.notesRepository.getUserNoteCount(ownerId);
+    }
+
     async createNote(note: NoteDto): Promise<NoteDto> {
         const createdNote = await this.notesRepository.create(new Note(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id));
 
@@ -17,5 +21,7 @@ export class NoteService implements INoteService {
             (n) => new NoteDto(n.id, n.title, n.content, n.image_url, n.is_pinned, n.owner_id)
         );
     }
-
+    async deleteNote(id: number): Promise<boolean> {
+        return this.notesRepository.delete(id);
+    }
 }
