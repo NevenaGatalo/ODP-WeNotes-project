@@ -19,6 +19,55 @@ export class NotesController {
     this.router.get('/notes', authenticate, this.getAllUserNotes.bind(this));
     this.router.delete('/notes/:id', authenticate, this.delete.bind(this));
     this.router.put('/notes/:id', authenticate, this.update.bind(this));
+    this.router.post('/notes/:id', authenticate, this.duplicate.bind(this));
+  }
+  /**
+     * POST /api/v1/notes/:id
+     * Duplira postojecu belesku
+     */
+  private async duplicate(req: Request, res: Response): Promise<void> {
+    try {
+      const id = parseInt(req.params.id);
+      const ownerId = req.user!.id;
+
+      if (!id) {
+        res.status(400).json({ success: false, message: "ID beleške je obavezan." });
+        return;
+      }
+
+      //validacija da li korisnik ima vec 10 beleski
+      if (req.user!.uloga === 'user') {
+        const noteCount = await this.notesService.getUserNoteCount(ownerId);
+        if (noteCount == -1) {
+          res.status(500).json({ success: false, message: 'Neuspesno prebrojavanje beleski korisnika, kreiranje nije uspelo' });
+          return;
+        }
+        if (noteCount >= 10) {
+          res.status(403).json({ success: false, message: 'Korisnik vec ima 10 kreiranih beleski, nije moguce duplirati belesku' });
+          return;
+        }
+      }
+
+      //provera da li se duplira beleska trenutno ulogovanog korisnika
+      const noteForDuplicating = await this.notesService.getNoteById(id);
+      if(noteForDuplicating.owner_id !== ownerId){
+        res.status(403).json({ success: false, message: "Beleska ne pripada korisniku." });
+        return;
+      }
+
+      const duplicatedNote = await this.notesService.duplicateNote(id, ownerId);
+
+      if (duplicatedNote.id !== 0) {
+        res.status(201).json({ success: true, message: "Beleška je duplirana.", data: duplicatedNote });
+      } else {
+        res.status(404).json({ success: false, message: "Beleška nije pronađena." });
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: String(error),
+      });
+    }
   }
 
   /**
@@ -30,19 +79,27 @@ export class NotesController {
       const id = parseInt(req.params.id);
       const { title, content, image_url, is_pinned } = req.body;
 
-      if (!id || !title || !content || is_pinned == null) {
+      if (!id || !title || !content || is_pinned === null) {
         res.status(400).json({ success: false, message: 'Nevalidni podaci za ažuriranje.' });
         return;
       }
-      
+
       //validacija podataka da li su tacni
-       if (ValidateNewNote(title, content).uspesno == false) {
+      if (ValidateNewNote(title, content).uspesno == false) {
         res.status(400).json({ success: false, message: 'Naslov i beleska su obavezna polja za unos.' });
         return;
       }
+      
       //validacija da user ne sme da salje image_url
       const finalImageUrl = req.user!.uloga === 'admin' ? image_url || null : null;
       const ownerId = req.user!.id;
+
+      //validacija da li se azurira beleska koja pripada ulogovanom korisniku
+      const noteForDuplicating = await this.notesService.getNoteById(id);
+      if(noteForDuplicating.owner_id !== ownerId){
+        res.status(403).json({ success: false, message: "Beleska ne pripada korisniku." });
+        return;
+      }
 
       const updatedNote = await this.notesService.updateNote(new NoteDto(id, title, content, finalImageUrl, is_pinned, ownerId));
 
@@ -52,10 +109,10 @@ export class NotesController {
         res.status(404).json({ success: false, message: 'Beleska nije pronadjena.' });
       }
     } catch (error) {
-      res.status(500).json({ 
-        success: false, 
-        message: error instanceof Error ? error.message : String(error) 
-    });
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : String(error)
+      });
     }
   }
 
@@ -103,7 +160,7 @@ export class NotesController {
       //validacija user ne sme da kreira vise od 10 beleski
       if (req.user!.uloga === 'user') {
         const noteCount = await this.notesService.getUserNoteCount(ownerId);
-        if (noteCount == -1) {
+        if (noteCount === -1) {
           res.status(500).json({ success: false, message: 'Neuspesno prebrojavanje beleski korisnika, kreiranje nije uspelo' });
           return;
         }

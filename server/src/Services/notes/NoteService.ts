@@ -5,6 +5,31 @@ import { Note } from "../../Domain/models/Note";
 
 export class NoteService implements INoteService {
     constructor(private notesRepository: INotesRepository) { }
+    async getNoteById(id: number): Promise<NoteDto> {
+        const note = await this.notesRepository.getById(id);
+        if (!note.id) {
+            return new NoteDto(); // nije pronadjena
+        }
+        return new NoteDto(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id);
+    }
+
+    async duplicateNote(noteId: number, ownerId: number): Promise<NoteDto> {
+        const note = await this.notesRepository.getById(noteId);
+
+        if (!note.id) {
+            return new NoteDto(); // nije pronadjena
+        }
+
+        const newTitle = note.title + " (Kopija)";
+
+        const newNote = await this.notesRepository.create(
+            new Note(0, newTitle, note.content, note.image_url, note.is_pinned, ownerId)
+        );
+
+        return new NoteDto(newNote.id, newNote.title, newNote.content, newNote.image_url, newNote.is_pinned, newNote.owner_id);
+    }
+
+
     async updateNote(note: NoteDto): Promise<NoteDto> {
         const updatedNote = await this.notesRepository.update(
             new Note(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id)
