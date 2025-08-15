@@ -3,6 +3,8 @@ import type { AuthContextType } from "../../types/auth/AuthContext";
 import AuthContext from "../../contexts/auth/AuthContext";
 
 // Hook za korišćenje AuthContext-a
+//useContext je ugradjen hook u react-u
+//useAuth je nas napravljen hook
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (context === undefined) {

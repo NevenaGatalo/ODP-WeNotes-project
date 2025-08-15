@@ -12,6 +12,8 @@ export default function PrijavaStranica({ authApi }: LoginPageProps) {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
+  //useEffect - hook svaki put kad se pojavi prijava stranica ako su prazni parametri onda se poziva samo jednom
+  //ako ima parametre znaci da cim se jedan od njih promeni onda se poziva telo iz useEffecta
   useEffect(() => {
     if (isAuthenticated && user) 
       navigate(`/${user.uloga}-dashboard`);
