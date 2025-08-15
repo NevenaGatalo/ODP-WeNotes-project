@@ -5,6 +5,7 @@ export class Note{
         public content: string = '',
         public image_url: string = '',
         public is_pinned: boolean = false,
-        public owner_id: number = 0
+        public owner_id: number = 0,
+        public share_guid: string = ''
     ){}
 }

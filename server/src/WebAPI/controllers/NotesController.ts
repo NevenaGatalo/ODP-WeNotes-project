@@ -20,6 +20,74 @@ export class NotesController {
     this.router.delete('/notes/:id', authenticate, this.delete.bind(this));
     this.router.put('/notes/:id', authenticate, this.update.bind(this));
     this.router.post('/notes/:id', authenticate, this.duplicate.bind(this));
+    this.router.put('/notes/share/:id', authenticate, this.share.bind(this));
+    this.router.get('/notes/share/:guid', this.show.bind(this));
+
+  }
+  /**
+     * GET /notes/share/:guid
+     * Vraca belesku sa odredjenim guidom
+     */
+  public async show(req: Request, res: Response) {
+    const { guid } = req.params;
+
+    try {
+        // traži belešku po share_guid
+        const note = await this.notesService.getNoteByGuid(guid);
+
+        if (note.id === 0) {
+            res.status(404).json({ success: false, message: 'Beleška nije pronađena' });
+            return;
+        }
+
+        // vrati sadržaj beleške
+        res.json({ success: true, note });
+    } catch (error) {
+        res.status(500).json({ success: false, message: String(error) });
+    }
+}
+
+  /**
+     * PUT /api/v1/notes/share/:id
+     * Pravi link za deljenje postojece beleske
+     */
+  public async share(req: Request, res: Response) {
+    const noteId = Number(req.params.id);
+    const ownerId = req.user!.id;
+
+    try {
+
+      if (!noteId) {
+        res.status(400).json({ success: false, message: "ID beleške je obavezan." });
+        return;
+      }
+      //provera da li se deli beleska trenutno ulogovanog korisnika
+      const noteForSharing = await this.notesService.getNoteById(noteId);
+      if (noteForSharing.owner_id !== ownerId) {
+        res.status(403).json({ success: false, message: "Beleska ne pripada korisniku." });
+        return;
+      }
+      //provera da li guid postoji
+      if(noteForSharing.share_guid !== null && noteForSharing.share_guid !== ""){
+        res.status(403).json({ success: false, message: "Beleska vec ima share link." });
+        return;
+      }
+
+
+
+      const guid = await this.notesService.shareNote(noteId);
+      if (!guid) {
+        res.status(500).json({ success: false, message: 'Greska pri kreiranju share linka' });
+        return;
+      }
+
+      res.status(200).json({ success: true, share_link: `http://localhost:4000/api/v1/notes/share/${guid}` });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : String(error)
+      });
+    }
   }
   /**
      * POST /api/v1/notes/:id
@@ -50,7 +118,7 @@ export class NotesController {
 
       //provera da li se duplira beleska trenutno ulogovanog korisnika
       const noteForDuplicating = await this.notesService.getNoteById(id);
-      if(noteForDuplicating.owner_id !== ownerId){
+      if (noteForDuplicating.owner_id !== ownerId) {
         res.status(403).json({ success: false, message: "Beleska ne pripada korisniku." });
         return;
       }
@@ -89,14 +157,14 @@ export class NotesController {
         res.status(400).json({ success: false, message: 'Naslov i beleska su obavezna polja za unos.' });
         return;
       }
-      
+
       //validacija da user ne sme da salje image_url
       const finalImageUrl = req.user!.uloga === 'admin' ? image_url || null : null;
       const ownerId = req.user!.id;
 
       //validacija da li se azurira beleska koja pripada ulogovanom korisniku
       const noteForDuplicating = await this.notesService.getNoteById(id);
-      if(noteForDuplicating.owner_id !== ownerId){
+      if (noteForDuplicating.owner_id !== ownerId) {
         res.status(403).json({ success: false, message: "Beleska ne pripada korisniku." });
         return;
       }
