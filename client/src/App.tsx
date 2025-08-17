@@ -23,6 +23,7 @@ function App() {
           path="/user-dashboard"
           element={
             <ProtectedRoute requiredRole="user">
+              {/* <--umesto ove komponente treba da se prikaze nasa komponenta sa svim beleskama--> */}
               <KontrolnaTablaUserStranica />
             </ProtectedRoute>
           }

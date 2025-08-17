@@ -15,7 +15,7 @@ export class NotesController {
     this.initializeRoutes();
   }
   private initializeRoutes(): void {
-    this.router.post('/note', authenticate, this.create.bind(this));
+    this.router.post('/notes', authenticate, this.create.bind(this));
     this.router.get('/notes', authenticate, this.getAllUserNotes.bind(this));
     this.router.delete('/notes/:id', authenticate, this.delete.bind(this));
     this.router.put('/notes/:id', authenticate, this.update.bind(this));
@@ -41,7 +41,7 @@ export class NotesController {
         }
 
         // vrati sadržaj beleške
-        res.json({ success: true, note });
+        res.json({ success: true, message: "Beleska pronadjena", data: note });
     } catch (error) {
         res.status(500).json({ success: false, message: String(error) });
     }
@@ -54,7 +54,6 @@ export class NotesController {
   public async share(req: Request, res: Response) {
     const noteId = Number(req.params.id);
     const ownerId = req.user!.id;
-
     try {
 
       if (!noteId) {
@@ -73,15 +72,13 @@ export class NotesController {
         return;
       }
 
-
-
       const guid = await this.notesService.shareNote(noteId);
       if (!guid) {
         res.status(500).json({ success: false, message: 'Greska pri kreiranju share linka' });
         return;
       }
 
-      res.status(200).json({ success: true, share_link: `http://localhost:4000/api/v1/notes/share/${guid}` });
+      res.status(200).json({ success: true, message: "Uspesno kreiran link", data: `http://localhost:4000/api/v1/notes/share/${guid}` });
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -266,7 +263,7 @@ export class NotesController {
       const ownerId = req.user?.id;
       console.log("id prijavljenog: " + ownerId);
       if (!ownerId) {
-        res.status(401).json({ message: "Korisnik nije prijavljen" });
+        res.status(401).json({ success: false, message: "Korisnik nije prijavljen" });
         return;
       }
 
@@ -274,10 +271,10 @@ export class NotesController {
       const notes = await this.notesService.getAllUserNotes(ownerId);
 
       // 3. Vraćamo rezultat klijentu
-      res.status(200).json(notes);
+      res.status(200).json({ success: true, message: 'Uspešno kreirana beleska', data: notes });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Greška pri dohvatanju beleški" });
+      res.status(500).json({ success: false, message: "Greška pri dohvatanju beleški" });
     }
   }
   public getRouter(): Router {

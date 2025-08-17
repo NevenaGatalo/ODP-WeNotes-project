@@ -8,6 +8,7 @@ export function PrijavaForma({ authApi }: AuthFormProps) {
   const [korisnickoIme, setKorisnickoIme] = useState("");
   const [lozinka, setLozinka] = useState("");
   const [greska, setGreska] = useState("");
+  //iz hook-a useAuth uzima se samo funkcija login
   const { login } = useAuth();
 
   const podnesiFormu = async (e: React.FormEvent) => {
