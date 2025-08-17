@@ -11,6 +11,8 @@ import KontrolnaTablaUserStranica from "./pages/kontrolna_tabla/KontrolnaTablaUs
 import KontrolnaTablaAdminStranica from "./pages/kontrolna_tabla/KontrolnaTablaAdminStranica";
 import NotFoundStranica from "./pages/not_found/NotFoundPage";
 import { usersApi } from "./api_services/users/UsersAPIService";
+import NotesGridPage from "./pages/notes/NotesGridPage";
+import { notesApi } from "./api_services/notes/NotesAPIService";
 
 function App() {
   return (
@@ -24,7 +26,9 @@ function App() {
           element={
             <ProtectedRoute requiredRole="user">
               {/* <--umesto ove komponente treba da se prikaze nasa komponenta sa svim beleskama--> */}
-              <KontrolnaTablaUserStranica />
+              {/* <KontrolnaTablaUserStranica /> */}
+              
+              <NotesGridPage notesApi={notesApi}/>
             </ProtectedRoute>
           }
         />

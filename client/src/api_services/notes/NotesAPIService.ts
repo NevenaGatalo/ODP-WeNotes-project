@@ -16,17 +16,27 @@ export const notesApi: INotesAPIService = {
             return new NoteDto();
         }
     },
-    async getAllUserNotes(ownerId: number): Promise<NoteDto[]> {
+    async getAllUserNotes(token: string): Promise<NoteDto[]> {
         try{
-            const res = await axios.get<NotesData>(`${API_URL}/${ownerId}`);
+            //const res = await axios.get<NotesData>(`${API_URL}/${ownerId}`);
+            //const res = await axios.get<NotesData>(API_URL);
+            const res = await axios.get(`${API_URL}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
             return res.data.data;
         }catch{
             return [];
         }
     },
-    async deleteNote(id: number): Promise<boolean> {
+    async deleteNote(id: number, token: string): Promise<boolean> {
         try {
-            const res = await axios.delete(`${API_URL}/${id}`);
+            const res = await axios.delete(`${API_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
             return res.data.success;
         } catch {
             return false;
