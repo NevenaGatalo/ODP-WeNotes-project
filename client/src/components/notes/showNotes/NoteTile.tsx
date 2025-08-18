@@ -9,14 +9,16 @@ interface NoteTileProps {
   note: NoteDto;
   onDelete: (id: number) => void;
   //da refreshuje notes
-   onPin: (note: NoteDto) => void;
-  
+  onRefreshNote: (note: NoteDto) => void;
+  onRefreshNotes: (notes: NoteDto[]) => void;
+
 }
 
 export const NoteTile: React.FC<NoteTileProps> = ({
   note,
   onDelete,
-  onPin
+  onRefreshNote,
+  onRefreshNotes
 }) => {
   const { token } = useAuth();
   const handleDelete = async () => {
@@ -39,17 +41,73 @@ export const NoteTile: React.FC<NoteTileProps> = ({
 
   const handlePin = async () => {
     //treba da poziva update i da mu prosledi novu vrednost pina
-    try{
+    try {
       //promeni is_pinned
       note.is_pinned = !note.is_pinned;
       const updatedNote = await notesApi.updateNote(note.id, note, token!);
-      // const refreshed = await notesApi.getAllUserNotes(token!);
-      // onPin(refreshed);
-      onPin(updatedNote);
-    }catch{
+      onRefreshNote(updatedNote);
+    } catch {
       toast.error("Došlo je do greške.");
     }
   };
+  const handleCopyLink = async () => {
+    try {
+      if (note.share_guid) {
+        const link = `http://localhost:4000/api/v1/notes/share/${note.share_guid}`;
+        await navigator.clipboard.writeText(link);
+        toast.success("Link kopiran u clipboard!");
+      } else {
+        toast.error("Nema kreiranog linka za ovu belešku.");
+      }
+    } catch {
+      toast.error("Došlo je do greške prilikom kopiranja linka.");
+    }
+  };
+  const handleShare = async () => {
+  try {
+    if (!token) {
+      toast.error("Token ne postoji.");
+      return;
+    }
+
+    const response = await notesApi.shareNote(note.id, note, token!);
+    if (response) {
+      // response.data sadrži tvoj link
+      const link = `http://localhost:4000/api/v1/notes/share/${response.share_guid}`;
+      await navigator.clipboard.writeText(link);
+      toast.success("Link kreiran i kopiran u clipboard!");
+      // osveži note da bi share_guid bio setovan
+      onRefreshNote(response); 
+    } else {
+      toast.error("Greška prilikom kreiranja linka.");
+    }
+  } catch (error) {
+    toast.error("Došlo je do greške.");
+  }
+};
+const handleDuplicate = async () => {
+  try {
+    if (!token) {
+      toast.error("Token ne postoji.");
+      return;
+    }
+
+    // Poziva servis za dupliranje
+    const duplicatedNote = await notesApi.duplicateNote(note.id, note.owner_id, token);
+    
+    if (duplicatedNote && duplicatedNote.id !== 0) {
+      // Osvežava listu beleški u parent komponenti
+      const refreshed = await notesApi.getAllUserNotes(token!);
+      onRefreshNotes(refreshed);
+      toast.success("Beleška je duplirana!");
+    } else {
+      toast.error("Greška prilikom dupliranja beleške.");
+    }
+  } catch {
+    toast.error("Došlo je do greške.");
+  }
+};
+
   return (
     <div className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between">
       note tile
@@ -77,7 +135,7 @@ export const NoteTile: React.FC<NoteTileProps> = ({
 
       <div className="flex justify-between mt-2">
         <button
-          //onClick={() => onDuplicate(note.id)}
+          onClick={handleDuplicate}
           className="text-sm bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
         >
           Duplicate
@@ -85,14 +143,14 @@ export const NoteTile: React.FC<NoteTileProps> = ({
 
         {!note.share_guid ? (
           <button
-            //onClick={() => onShare(note.id)}
+            onClick={handleShare}
             className="text-sm bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
           >
             Share
           </button>
         ) : (
           <button
-            //onClick={() => onCopyLink(note.id)}
+            onClick={handleCopyLink}
             className="text-sm bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-600"
           >
             Copy Link

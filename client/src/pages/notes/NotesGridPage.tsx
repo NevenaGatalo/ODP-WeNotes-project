@@ -42,20 +42,6 @@ export default function NotesGridPage({ notesApi }: NotesGridPageProps) {
 
     }, [isAuthenticated, logout, navigate, notesApi]);
 
-    // useEffect(() => {
-
-    //     const token = PročitajVrednostPoKljuču("authToken");
-    //     const fetchQuestions = async () => {
-    //         if (!user) return;
-    //         try {
-    //             const fetched = await notesApi.getAllUserNotes(token);
-    //             setNotes(fetched);
-    //         } catch {
-    //             toast.error("Greška prilikom učitavanja pitanja");
-    //         }
-    //     };
-    //     fetchQuestions();
-    // }, [notesApi]);
 
     return (
         <main>
@@ -69,15 +55,6 @@ export default function NotesGridPage({ notesApi }: NotesGridPageProps) {
             {showCreateForm && (
                 <CreateNoteForm
                     notesApi={notesApi}
-                    // onNoteCreated={async () => {
-                    //     // refresuj listu nakon dodavanja nove beleške
-                    //     const token = PročitajVrednostPoKljuču("authToken");
-                    //     if (token && user) {
-                    //         const refreshed = await notesApi.getAllUserNotes(token);
-                    //         setNotes(refreshed);
-                    //     }
-                    //     setShowCreateForm(false); // zatvori formu posle dodavanja
-                    // }}
                     onRefreshNotes = {setNotes}
                     onCancel={() => setShowCreateForm(false)}
                 />

@@ -9,6 +9,7 @@ export interface INoteService{
     updateNote(note: NoteDto): Promise<NoteDto>;
     duplicateNote(noteId: number, ownerId: number): Promise<NoteDto>;
     getNoteById(id: number): Promise<NoteDto>;
-    shareNote(id: number): Promise<string | null>;
+    //shareNote(id: number): Promise<string | null>;
+    shareNote(note: NoteDto): Promise<NoteDto>;
     getNoteByGuid(guid: string): Promise<NoteDto>
 }

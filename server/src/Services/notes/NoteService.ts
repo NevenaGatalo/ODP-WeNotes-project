@@ -14,12 +14,21 @@ export class NoteService implements INoteService {
         return new NoteDto(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id, note.share_guid);
 
     }
-    async shareNote(id: number): Promise<string | null> {
+    // async shareNote(id: number): Promise<string | null> {
+    //     const guid = uuidv4(); // generiše jedinstveni GUID
+        
+    //     const success = await this.notesRepository.updateGuid(id, guid);
+    //     if (success) return guid;
+    //     return null;
+    // }
+    async shareNote(note: NoteDto): Promise<NoteDto> {
         const guid = uuidv4(); // generiše jedinstveni GUID
-
-        const success = await this.notesRepository.updateGuid(id, guid);
-        if (success) return guid;
-        return null;
+        
+        const updatedNote = await this.notesRepository.updateGuid(
+            new Note(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id, guid)
+        );
+        return new NoteDto(updatedNote.id, updatedNote.title, updatedNote.content, updatedNote.image_url, updatedNote.is_pinned, updatedNote.owner_id, updatedNote.share_guid);
+        
     }
     async getNoteById(id: number): Promise<NoteDto> {
         const note = await this.notesRepository.getById(id);
@@ -67,7 +76,7 @@ export class NoteService implements INoteService {
     async getAllUserNotes(ownerId: number): Promise<NoteDto[]> {
         const notes = await this.notesRepository.getByUserId(ownerId);
         return notes.map(
-            (n) => new NoteDto(n.id, n.title, n.content, n.image_url, n.is_pinned, n.owner_id)
+            (n) => new NoteDto(n.id, n.title, n.content, n.image_url, n.is_pinned, n.owner_id, n.share_guid)
         );
     }
     async deleteNote(id: number): Promise<boolean> {

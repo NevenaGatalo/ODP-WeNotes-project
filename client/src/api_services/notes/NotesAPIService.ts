@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { NoteData, ShareLinkData } from "../../types/notes/NotesData";
+import type { NoteData } from "../../types/notes/NotesData";
 import type { INotesAPIService } from "./INotesAPIService";
 import { NoteDto } from "../../models/notes/NoteDto";
 
@@ -56,20 +56,40 @@ export const notesApi: INotesAPIService = {
             return new NoteDto();
         }
     },
-    async duplicateNote(id: number, owner_id: number): Promise<NoteDto> {
+    async duplicateNote(id: number, owner_id: number, token: string): Promise<NoteDto> {
         try {
-            const res = await axios.post<NoteData>(`${API_URL}/${id}`, owner_id);
+            const res = await axios.post<NoteData>(`${API_URL}/${id}`, owner_id, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             return res.data.data;
         } catch {
             return new NoteDto();
         }
     },
-    async shareNote(id: number): Promise<string> {
+    // async shareNote(id: number, token: string): Promise<string> {
+    //     try {
+    //         const res = await axios.put<ShareLinkData>(`${API_URL}/share/${id}`, {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //         });
+    //         return res.data.data;
+    //     } catch {
+    //         return "";
+    //     }
+    // },
+     async shareNote(id: number, note: NoteDto, token: string): Promise<NoteDto> {
         try {
-            const res = await axios.put<ShareLinkData>(`${API_URL}/share/${id}`);
+            const res = await axios.put<NoteData>(`${API_URL}/share/${id}`,note, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             return res.data.data;
         } catch {
-            return "";
+            return new NoteDto();
         }
     },
     async showSharedNote(guid: string): Promise<NoteDto> {

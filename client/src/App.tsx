@@ -13,13 +13,17 @@ import NotFoundStranica from "./pages/not_found/NotFoundPage";
 import { usersApi } from "./api_services/users/UsersAPIService";
 import NotesGridPage from "./pages/notes/NotesGridPage";
 import { notesApi } from "./api_services/notes/NotesAPIService";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<PrijavaStranica authApi={authApi} />} />
-      <Route path="/register" element={<RegistracijaStranica authApi={authApi} />} />
-      <Route path="/404" element={<NotFoundStranica />} />
+
+    <>
+      <Toaster />
+      <Routes>
+        <Route path="/login" element={<PrijavaStranica authApi={authApi} />} />
+        <Route path="/register" element={<RegistracijaStranica authApi={authApi} />} />
+        <Route path="/404" element={<NotFoundStranica />} />
 
         <Route
           path="/user-dashboard"
@@ -27,8 +31,8 @@ function App() {
             <ProtectedRoute requiredRole="user">
               {/* <--umesto ove komponente treba da se prikaze nasa komponenta sa svim beleskama--> */}
               {/* <KontrolnaTablaUserStranica /> */}
-              
-              <NotesGridPage notesApi={notesApi}/>
+
+              <NotesGridPage notesApi={notesApi} />
             </ProtectedRoute>
           }
         />
@@ -37,7 +41,7 @@ function App() {
           path="/admin-dashboard"
           element={
             <ProtectedRoute requiredRole="admin">
-              <KontrolnaTablaAdminStranica usersApi={usersApi} /> 
+              <KontrolnaTablaAdminStranica usersApi={usersApi} />
             </ProtectedRoute>
           }
         />
@@ -47,7 +51,9 @@ function App() {
 
         {/* Catch-all ruta za nepostojeće stranice */}
         <Route path="*" element={<Navigate to="/404" replace />} />
-    </Routes>
+      </Routes>
+    </>
+
   );
 }
 

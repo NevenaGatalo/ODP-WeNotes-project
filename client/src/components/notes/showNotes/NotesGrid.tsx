@@ -15,7 +15,6 @@ interface NotesGridProps {
 export const NotesGrid: React.FC<NotesGridProps> = ({
   notes,
   setNotes,
-  //onPin,
 }) => {
     const handleRemove = (id: number) => {
     setNotes((prev) => prev.filter((q) => q.id !== id));
@@ -29,8 +28,8 @@ export const NotesGrid: React.FC<NotesGridProps> = ({
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
       {notes.map((note) => (
         <NoteTile
-          key={note.id} note={note} onDelete={handleRemove} onPin={handlePin}
-          //onPin={handlePin}
+          key={note.id} note={note} onDelete={handleRemove} onRefreshNote={handlePin} onRefreshNotes={setNotes}
+          
         />
       ))}
     </div>

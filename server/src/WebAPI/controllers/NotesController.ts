@@ -51,9 +51,47 @@ export class NotesController {
      * PUT /api/v1/notes/share/:id
      * Pravi link za deljenje postojece beleske
      */
-  public async share(req: Request, res: Response) {
+  // public async share(req: Request, res: Response) {
+  //   const noteId = Number(req.params.id);
+  //   const ownerId = req.user!.id;
+  //   try {
+
+  //     if (!noteId) {
+  //       res.status(400).json({ success: false, message: "ID beleške je obavezan." });
+  //       return;
+  //     }
+  //     //provera da li se deli beleska trenutno ulogovanog korisnika
+  //     const noteForSharing = await this.notesService.getNoteById(noteId);
+  //     if (noteForSharing.owner_id !== ownerId) {
+  //       res.status(403).json({ success: false, message: "Beleska ne pripada korisniku." });
+  //       return;
+  //     }
+  //     //provera da li guid postoji
+  //     if(noteForSharing.share_guid !== null && noteForSharing.share_guid !== ""){
+  //       res.status(403).json({ success: false, message: "Beleska vec ima share link." });
+  //       return;
+  //     }
+
+  //     const guid = await this.notesService.shareNote(noteId);
+  //     if (!guid) {
+  //       res.status(500).json({ success: false, message: 'Greska pri kreiranju share linka' });
+  //       return;
+  //     }
+
+  //     //res.status(200).json({ success: true, message: "Uspesno kreiran link", data: `http://localhost:4000/api/v1/notes/share/${guid}` });
+  //     res.status(200).json({ success: true, message: "Uspesno kreiran link", data: note });
+  //   } catch (error) {
+  //     res.status(500).json({
+  //       success: false,
+  //       message: error instanceof Error ? error.message : String(error)
+  //     });
+  //   }
+  // }
+   public async share(req: Request, res: Response) {
     const noteId = Number(req.params.id);
     const ownerId = req.user!.id;
+    const { title, content, image_url, is_pinned, owner_id, share_guid } = req.body;
+
     try {
 
       if (!noteId) {
@@ -61,24 +99,26 @@ export class NotesController {
         return;
       }
       //provera da li se deli beleska trenutno ulogovanog korisnika
-      const noteForSharing = await this.notesService.getNoteById(noteId);
-      if (noteForSharing.owner_id !== ownerId) {
+      //const noteForSharing = await this.notesService.getNoteById(noteId);
+      if (owner_id !== ownerId) {
         res.status(403).json({ success: false, message: "Beleska ne pripada korisniku." });
         return;
       }
       //provera da li guid postoji
-      if(noteForSharing.share_guid !== null && noteForSharing.share_guid !== ""){
+      if(share_guid !== null && share_guid !== ""){
         res.status(403).json({ success: false, message: "Beleska vec ima share link." });
         return;
       }
 
-      const guid = await this.notesService.shareNote(noteId);
-      if (!guid) {
+      const updatedNote = await this.notesService.shareNote(new NoteDto(noteId, title, content, image_url, is_pinned, ownerId, share_guid));
+
+      if (updatedNote.id === 0) {
         res.status(500).json({ success: false, message: 'Greska pri kreiranju share linka' });
         return;
       }
 
-      res.status(200).json({ success: true, message: "Uspesno kreiran link", data: `http://localhost:4000/api/v1/notes/share/${guid}` });
+      //res.status(200).json({ success: true, message: "Uspesno kreiran link", data: `http://localhost:4000/api/v1/notes/share/${guid}` });
+      res.status(200).json({ success: true, message: "Uspesno kreiran link", data: updatedNote });
     } catch (error) {
       res.status(500).json({
         success: false,

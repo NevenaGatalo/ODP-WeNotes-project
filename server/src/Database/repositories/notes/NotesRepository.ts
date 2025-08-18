@@ -2,6 +2,7 @@ import { INotesRepository } from "../../../Domain/repositories/notes/INotesRepos
 import { Note } from "../../../Domain/models/Note";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
+import { NoteDto } from "../../../Domain/DTOs/notes/NoteDto";
 
 export class NotesRepository implements INotesRepository {
     async findByGuid(guid: string): Promise<Note> {
@@ -34,17 +35,30 @@ export class NotesRepository implements INotesRepository {
             return new Note();
         }
     }
-    async updateGuid(id: number, guid: string): Promise<boolean> {
+    // async updateGuid(id: number, guid: string): Promise<boolean> {
+    //     try {
+    //         const query = `UPDATE notes SET share_guid = ? WHERE id = ?`;
+    //         const [result] = await db.execute<ResultSetHeader>(query, [guid, id]);
+
+    //         if (result.affectedRows > 0) {
+    //             return true;
+    //         }
+    //         return false;
+    //     } catch (error) {
+    //         return false;
+    //     }
+    // }
+     async updateGuid(note: Note): Promise<Note> {
         try {
             const query = `UPDATE notes SET share_guid = ? WHERE id = ?`;
-            const [result] = await db.execute<ResultSetHeader>(query, [guid, id]);
+            const [result] = await db.execute<ResultSetHeader>(query, [note.share_guid, note.id]);
 
             if (result.affectedRows > 0) {
-                return true;
+                return note;
             }
-            return false;
+            return new Note();
         } catch (error) {
-            return false;
+            return new Note();
         }
     }
     async update(note: Note): Promise<Note> {
@@ -112,7 +126,7 @@ export class NotesRepository implements INotesRepository {
             const [rows] = await db.execute<RowDataPacket[]>(query, [ownerId]);
 
             if (rows.length > 0) {
-                return rows.map(row => new Note(row.id, row.title, row.content, row.image_url, row.is_pinned, row.owner_id));
+                return rows.map(row => new Note(row.id, row.title, row.content, row.image_url, row.is_pinned, row.owner_id, row.share_guid));
             }
             return [];
         } catch {

@@ -9,6 +9,6 @@ export interface NotesData extends ResponseData{
     data: NoteDto[];
 }
 
-export interface ShareLinkData extends ResponseData{
-    data: string
-}
+// export interface ShareLinkData extends ResponseData{
+//     data: string
+// }
