@@ -1,32 +1,26 @@
 // NoteTile.tsx
 import React from "react";
-import type { NoteDto } from "../../models/notes/NoteDto";
-import { notesApi } from "../../api_services/notes/NotesAPIService";
+import type { NoteDto } from "../../../models/notes/NoteDto";
+import { notesApi } from "../../../api_services/notes/NotesAPIService";
 import toast from "react-hot-toast";
-import { useAuth } from "../../hooks/auth/useAuthHook";
+import { useAuth } from "../../../hooks/auth/useAuthHook";
 
 interface NoteTileProps {
   note: NoteDto;
-  //userRole: "user" | "admin";
   onDelete: (id: number) => void;
-  //onPin: (id: number) => void;
-  //onDuplicate: (id: number) => void;
-  //onShare: (id: number) => void;
-  //onCopyLink: (id: number) => void;
+  //da refreshuje notes
+   onPin: (note: NoteDto) => void;
+  
 }
 
 export const NoteTile: React.FC<NoteTileProps> = ({
   note,
-  //userRole,
-  onDelete
-  //onPin,
-  //onDuplicate,
-  //onShare,
-  //onCopyLink,
+  onDelete,
+  onPin
 }) => {
-    const { token } = useAuth();
-    const handleDelete = async () => {
-        if (!token) {
+  const { token } = useAuth();
+  const handleDelete = async () => {
+    if (!token) {
       toast.error("Token ne postoji.");
       return;
     }
@@ -42,16 +36,29 @@ export const NoteTile: React.FC<NoteTileProps> = ({
       toast.error("Došlo je do greške.");
     }
   };
+
+  const handlePin = async () => {
+    //treba da poziva update i da mu prosledi novu vrednost pina
+    try{
+      //promeni is_pinned
+      note.is_pinned = !note.is_pinned;
+      const updatedNote = await notesApi.updateNote(note.id, note, token!);
+      // const refreshed = await notesApi.getAllUserNotes(token!);
+      // onPin(refreshed);
+      onPin(updatedNote);
+    }catch{
+      toast.error("Došlo je do greške.");
+    }
+  };
   return (
     <div className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between">
-        note tile
+      note tile
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-lg font-semibold">{note.title}</h3>
         <button
-          //onClick={() => onPin(note.id)}
-          className={`text-sm px-2 py-1 rounded ${
-            note.is_pinned ? "bg-yellow-400 text-white" : "bg-gray-200"
-          }`}
+          onClick={handlePin}
+          className={`text-sm px-2 py-1 rounded ${note.is_pinned ? "bg-yellow-400 text-white" : "bg-gray-200"
+            }`}
         >
           {note.is_pinned ? "Pinned" : "Pin"}
         </button>

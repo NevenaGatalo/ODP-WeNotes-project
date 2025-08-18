@@ -5,7 +5,9 @@ import { PročitajVrednostPoKljuču } from "../../helpers/local_storage";
 import { useEffect, useState } from "react";
 import type { NoteDto } from "../../models/notes/NoteDto";
 import toast from "react-hot-toast";
-import { NotesGrid } from "../../components/notes/NotesGrid";
+import { NotesGrid } from "../../components/notes/showNotes/NotesGrid";
+import CreateNoteForm from "../../components/notes/createNote/CreateNoteForm";
+
 
 interface NotesGridPageProps {
     notesApi: INotesAPIService;
@@ -13,6 +15,8 @@ interface NotesGridPageProps {
 
 export default function NotesGridPage({ notesApi }: NotesGridPageProps) {
     const [notes, setNotes] = useState<NoteDto[]>([]);
+    const [showCreateForm, setShowCreateForm] = useState(false);
+
     const { isAuthenticated, logout, user } = useAuth();
     const navigate = useNavigate();
 
@@ -22,7 +26,7 @@ export default function NotesGridPage({ notesApi }: NotesGridPageProps) {
         if (!isAuthenticated || !token) {
             logout();
             navigate("/login");
-            
+
         }
 
         const fetchNotes = async () => {
@@ -39,7 +43,7 @@ export default function NotesGridPage({ notesApi }: NotesGridPageProps) {
     }, [isAuthenticated, logout, navigate, notesApi]);
 
     // useEffect(() => {
-        
+
     //     const token = PročitajVrednostPoKljuču("authToken");
     //     const fetchQuestions = async () => {
     //         if (!user) return;
@@ -55,9 +59,35 @@ export default function NotesGridPage({ notesApi }: NotesGridPageProps) {
 
     return (
         <main>
+            <button
+                onClick={() => setShowCreateForm(true)}
+                className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+            >
+                ➕ Nova beleška
+            </button>
+
+            {showCreateForm && (
+                <CreateNoteForm
+                    notesApi={notesApi}
+                    // onNoteCreated={async () => {
+                    //     // refresuj listu nakon dodavanja nove beleške
+                    //     const token = PročitajVrednostPoKljuču("authToken");
+                    //     if (token && user) {
+                    //         const refreshed = await notesApi.getAllUserNotes(token);
+                    //         setNotes(refreshed);
+                    //     }
+                    //     setShowCreateForm(false); // zatvori formu posle dodavanja
+                    // }}
+                    onRefreshNotes = {setNotes}
+                    onCancel={() => setShowCreateForm(false)}
+                />
+            )}
+
             <NotesGrid
                 notes={notes}
-                setNotes={setNotes}></NotesGrid>
+                setNotes={setNotes}>
+            </NotesGrid>
+
         </main>
     )
 }

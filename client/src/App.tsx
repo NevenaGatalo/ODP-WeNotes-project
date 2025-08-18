@@ -7,7 +7,7 @@ import { authApi } from "./api_services/auth/AuthAPIService";
 import { ProtectedRoute } from "./components/protected_route/ProtectedRoute";
 import PrijavaStranica from "./pages/auth/PrijavaStranica";
 import RegistracijaStranica from "./pages/auth/RegistracijaStranica";
-import KontrolnaTablaUserStranica from "./pages/kontrolna_tabla/KontrolnaTablaUserStranica";
+//import KontrolnaTablaUserStranica from "./pages/kontrolna_tabla/KontrolnaTablaUserStranica";
 import KontrolnaTablaAdminStranica from "./pages/kontrolna_tabla/KontrolnaTablaAdminStranica";
 import NotFoundStranica from "./pages/not_found/NotFoundPage";
 import { usersApi } from "./api_services/users/UsersAPIService";

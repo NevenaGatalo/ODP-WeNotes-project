@@ -142,7 +142,7 @@ export class NotesController {
   private async update(req: Request, res: Response): Promise<void> {
     try {
       const id = parseInt(req.params.id);
-      const { title, content, image_url, is_pinned } = req.body;
+      const { title, content, image_url, is_pinned, share_guid } = req.body;
 
       if (!id || !title || !content || is_pinned === null) {
         res.status(400).json({ success: false, message: 'Nevalidni podaci za ažuriranje.' });
@@ -166,7 +166,7 @@ export class NotesController {
         return;
       }
 
-      const updatedNote = await this.notesService.updateNote(new NoteDto(id, title, content, finalImageUrl, is_pinned, ownerId));
+      const updatedNote = await this.notesService.updateNote(new NoteDto(id, title, content, finalImageUrl, is_pinned, ownerId, share_guid));
 
       if (updatedNote.id !== 0) {
         res.status(200).json({ success: true, message: 'Beleska je uspesno azurirana.', data: updatedNote });

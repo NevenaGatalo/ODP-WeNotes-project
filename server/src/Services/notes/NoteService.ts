@@ -48,10 +48,10 @@ export class NoteService implements INoteService {
 
     async updateNote(note: NoteDto): Promise<NoteDto> {
         const updatedNote = await this.notesRepository.update(
-            new Note(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id)
+            new Note(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id, note.share_guid)
         );
 
-        return new NoteDto(updatedNote.id, updatedNote.title, updatedNote.content, updatedNote.image_url, updatedNote.is_pinned, updatedNote.owner_id);
+        return new NoteDto(updatedNote.id, updatedNote.title, updatedNote.content, updatedNote.image_url, updatedNote.is_pinned, updatedNote.owner_id, updatedNote.share_guid);
     }
 
     async getUserNoteCount(ownerId: number): Promise<number> {
