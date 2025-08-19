@@ -25,33 +25,38 @@ const CreateNoteForm = ({
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-        const { name, value, files } = e.target as HTMLInputElement; // cast da imamo files
-
-        if (name === "image_url" && files && files[0]) {
-            // generiše lokalni URL za izabranu sliku
+        const { name, value } = e.target as HTMLInputElement;
+        setNotesData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const handleChangeImage = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const { files } = e.target as HTMLInputElement;
+        // generiše lokalni URL za izabranu sliku
+        if (files && files[0]) {
             const imageUrl = URL.createObjectURL(files[0]);
+            console.log("imageUrl createObject: " + imageUrl);
             setNotesData((prev) => ({
                 ...prev,
                 image_url: imageUrl,
             }));
-        } else {
-            setNotesData((prev) => ({
-                ...prev,
-                [name]: value,
-            }));
         }
-    };
+
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const validation = ValidateNewNote(
-          notesData.title,
-          notesData.content
+            notesData.title,
+            notesData.content
         );
 
         if (!validation.uspesno) {
-          setError(validation.poruka ?? "");
-          return;
+            setError(validation.poruka ?? "");
+            return;
         }
 
         try {
@@ -110,7 +115,7 @@ const CreateNoteForm = ({
                         <input
                             type="file"
                             accept="image/*"
-                            onChange={handleChange}
+                            onChange={handleChangeImage}
                             className="w-full text-gray-700"
                         />
                     </div>

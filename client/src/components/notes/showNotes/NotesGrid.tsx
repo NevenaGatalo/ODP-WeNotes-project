@@ -5,6 +5,7 @@ import type { NoteDto } from "../../../models/notes/NoteDto";
 interface NotesGridProps {
   notes: NoteDto[];
   setNotes: React.Dispatch<React.SetStateAction<NoteDto[]>>
+  onUpdateNote: (note: NoteDto) => void;
   //userRole: "user" | "admin";
   //onPin: (id: string) => void;
   //onDuplicate: (id: string) => void;
@@ -15,6 +16,7 @@ interface NotesGridProps {
 export const NotesGrid: React.FC<NotesGridProps> = ({
   notes,
   setNotes,
+  onUpdateNote
 }) => {
     const handleRemove = (id: number) => {
     setNotes((prev) => prev.filter((q) => q.id !== id));
@@ -29,7 +31,7 @@ export const NotesGrid: React.FC<NotesGridProps> = ({
       {notes.map((note) => (
         <NoteTile
           key={note.id} note={note} onDelete={handleRemove} onRefreshNote={handlePin} onRefreshNotes={setNotes}
-          
+          onUpdateNote={onUpdateNote}
         />
       ))}
     </div>

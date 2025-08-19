@@ -14,6 +14,7 @@ import { usersApi } from "./api_services/users/UsersAPIService";
 import NotesGridPage from "./pages/notes/NotesGridPage";
 import { notesApi } from "./api_services/notes/NotesAPIService";
 import { Toaster } from "react-hot-toast";
+import SharedNotePage from "./pages/notes/SharedNotePage";
 
 function App() {
   return (
@@ -26,9 +27,9 @@ function App() {
         <Route path="/404" element={<NotFoundStranica />} />
 
         <Route
-          path="/user-dashboard"
+          path="/dashboard"
           element={
-            <ProtectedRoute requiredRole="user">
+            <ProtectedRoute  requiredRole={["user", "admin"]}>
               {/* <--umesto ove komponente treba da se prikaze nasa komponenta sa svim beleskama--> */}
               {/* <KontrolnaTablaUserStranica /> */}
 
@@ -38,11 +39,9 @@ function App() {
         />
 
         <Route
-          path="/admin-dashboard"
+          path="/shared/:share_guid"
           element={
-            <ProtectedRoute requiredRole="admin">
-              <KontrolnaTablaAdminStranica usersApi={usersApi} />
-            </ProtectedRoute>
+            <SharedNotePage></SharedNotePage>
           }
         />
 

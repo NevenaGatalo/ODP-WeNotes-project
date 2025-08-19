@@ -45,7 +45,7 @@ export class NoteService implements INoteService {
             return new NoteDto(); // nije pronadjena
         }
 
-        const newTitle = note.title + " (Kopija)";
+        const newTitle = note.title;
 
         const newNote = await this.notesRepository.create(
             new Note(0, newTitle, note.content, note.image_url, note.is_pinned, ownerId)

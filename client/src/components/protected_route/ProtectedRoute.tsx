@@ -5,7 +5,7 @@ import { useAuth } from "../../hooks/auth/useAuthHook";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
-  requiredRole: string;
+  requiredRole: string[];
   redirectTo?: string;
 };
 
@@ -33,7 +33,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Ako je potrebna specifična uloga, proveri je
-  if (requiredRole && user?.uloga !== requiredRole) {
+  if (requiredRole && !requiredRole.includes(user!.uloga)) {
     return (
     <main className="min-h-screen bg-gradient-to-tr from-slate-600/75 to-red-800/70 flex items-center justify-center">
         <div className="bg-white/30 backdrop-blur-lg shadow-lg border border-red-300 rounded-2xl p-10 w-full max-w-lg text-center">
