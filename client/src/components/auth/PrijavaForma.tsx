@@ -30,7 +30,7 @@ export function PrijavaForma({ authApi }: AuthFormProps) {
     }
   };
 
-  return (
+ /*  return (
     <div className="bg-white/30 backdrop-blur-lg shadow-md rounded-2xl p-10 w-full max-w-md border border-blue-400">
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Пријава</h1>
       <form onSubmit={podnesiFormu} className="space-y-4">
@@ -63,5 +63,43 @@ export function PrijavaForma({ authApi }: AuthFormProps) {
         </Link>
       </p>
     </div>
-  );
+  ); */
+  // PrijavaForma
+return (
+  <div className="bg-gray-900/90 backdrop-blur-md shadow-lg rounded-2xl p-10 w-full max-w-md border border-gray-700 text-white">
+    <h1 className="text-3xl font-bold text-center text-yellow-400 mb-6">Prijava</h1>
+    <form onSubmit={podnesiFormu} className="space-y-4">
+      <input
+        type="text"
+        placeholder="Korisnicko ime"
+        value={korisnickoIme}
+        onChange={(e) => setKorisnickoIme(e.target.value)}
+        className="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+      />
+      <input
+        type="password"
+        placeholder="Lozinka"
+        value={lozinka}
+        onChange={(e) => setLozinka(e.target.value)}
+        className="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+      />
+      {greska && (
+        <p className="text-md text-center text-red-500 font-medium">{greska}</p>
+      )}
+      <button
+        type="submit"
+        className="w-full bg-yellow-400 text-black py-2 rounded-xl font-semibold hover:bg-yellow-500 transition shadow-md"
+      >
+        Prijavi se
+      </button>
+    </form>
+    <p className="text-center text-sm mt-4 text-gray-300">
+      Nemate nalog?{" "}
+      <Link to="/register" className="text-yellow-400 hover:underline">
+         Registrujte se
+      </Link>
+    </p>
+  </div>
+);
+
 }

@@ -4,6 +4,8 @@ import type { NoteDto } from "../../../models/notes/NoteDto";
 import { notesApi } from "../../../api_services/notes/NotesAPIService";
 import toast from "react-hot-toast";
 import { useAuth } from "../../../hooks/auth/useAuthHook";
+import { Pin, PinOff, Copy, Share2, Trash2, Edit, CopyCheck, Files } from "lucide-react";
+
 
 interface NoteTileProps {
   note: NoteDto;
@@ -113,68 +115,120 @@ export const NoteTile: React.FC<NoteTileProps> = ({
     onUpdateNote(note);
   }
 
+  // return (
+  //   <div className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between">
+  //     note tile
+  //     <div className="flex justify-between items-start mb-2">
+  //       <h3 className="text-lg font-semibold">{note.title}</h3>
+  //       <button
+  //         onClick={handlePin}
+  //         className={`text-sm px-2 py-1 rounded ${note.is_pinned ? "bg-yellow-400 text-white" : "bg-gray-200"
+  //           }`}
+  //       >
+  //         {note.is_pinned ? "Pinned" : "Pin"}
+  //       </button>
+  //     </div>
+
+  //     <p className="text-gray-700 mb-2">{note.content}</p>
+
+  //     {/* Prikaz slike samo za admina */}
+  //     {user?.uloga === "admin" && note.image_url && (
+  //       <img
+  //         src={note.image_url}
+  //         alt="Note"
+  //         className="w-full h-32 object-cover rounded mb-2"
+  //       />
+  //     )}
+
+  //     <div className="flex justify-between mt-2">
+  //       <button
+  //         onClick={handleDuplicate}
+  //         className="text-sm bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+  //       >
+  //         Duplicate
+  //       </button>
+
+  //       <button
+  //         onClick={handleUpdate}
+  //         className="text-sm bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-600"
+  //       >
+  //         Update
+  //       </button>
+
+  //       {!note.share_guid ? (
+  //         <button
+  //           onClick={handleShare}
+  //           className="text-sm bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+  //         >
+  //           Share
+  //         </button>
+  //       ) : (
+  //         <button
+  //           onClick={handleCopyLink}
+  //           className="text-sm bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-600"
+  //         >
+  //           Copy Link
+  //         </button>
+  //       )}
+  //       <button
+  //         onClick={handleDelete}
+  //         className="text-sm bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+  //       >
+  //         Delete
+  //       </button>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between">
-      note tile
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="text-lg font-semibold">{note.title}</h3>
-        <button
-          onClick={handlePin}
-          className={`text-sm px-2 py-1 rounded ${note.is_pinned ? "bg-yellow-400 text-white" : "bg-gray-200"
-            }`}
-        >
-          {note.is_pinned ? "Pinned" : "Pin"}
+    <div className="bg-gray-900 rounded-2xl shadow-lg p-4 flex flex-col justify-between border border-gray-800 hover:border-yellow-400 transition">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-lg font-semibold text-yellow-400">{note.title}</h3>
+        <button onClick={handlePin}>
+          {note.is_pinned ? (
+            <Pin className="text-yellow-400 w-5 h-5" />
+          ) : (
+            <PinOff className="text-gray-500 hover:text-yellow-400 w-5 h-5" />
+          )}
         </button>
       </div>
 
-      <p className="text-gray-700 mb-2">{note.content}</p>
+      {/* Content */}
+      <p className="text-white/80 mb-3">{note.content}</p>
 
-      {/* Prikaz slike samo za admina */}
+      {/* Prikaz slike za admina */}
       {user?.uloga === "admin" && note.image_url && (
         <img
           src={note.image_url}
           alt="Note"
-          className="w-full h-32 object-cover rounded mb-2"
+          className="w-full h-36 object-cover rounded-xl mb-3 border border-gray-700"
         />
       )}
 
-      <div className="flex justify-between mt-2">
-        <button
-          onClick={handleDuplicate}
-          className="text-sm bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-        >
-          Duplicate
+      {/* Action buttons */}
+      <div className="flex justify-between items-center mt-3 text-gray-400">
+        <button onClick={handleDuplicate} className="hover:text-yellow-400">
+          <Files className="w-5 h-5" />
         </button>
-
-        <button
-          onClick={handleUpdate}
-          className="text-sm bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-600"
-        >
-          Update
+        <button onClick={handleUpdate} className="hover:text-yellow-400">
+          <Edit className="w-5 h-5" />
         </button>
-
         {!note.share_guid ? (
-          <button
-            onClick={handleShare}
-            className="text-sm bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-          >
-            Share
+          <button onClick={handleShare} className="hover:text-yellow-400">
+            <Share2 className="w-5 h-5" />
           </button>
         ) : (
-          <button
-            onClick={handleCopyLink}
-            className="text-sm bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-600"
-          >
-            Copy Link
+          <button onClick={handleCopyLink} className="hover:text-yellow-400">
+            <Copy className="w-5 h-5" />
           </button>
         )}
-        <button
-          onClick={handleDelete}
-          className="text-sm bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-        >
-          Delete
+        <button onClick={handleDelete} className="hover:text-red-500">
+          <Trash2 className="w-5 h-5" />
         </button>
       </div>
     </div>
   );
+
+
 };

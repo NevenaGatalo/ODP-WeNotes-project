@@ -16,13 +16,20 @@ export default function PrijavaStranica({ authApi }: LoginPageProps) {
   //ako ima parametre znaci da cim se jedan od njih promeni onda se poziva telo iz useEffecta
   //koristi se useEffect + navigate da se prebaci na sledeci page
   useEffect(() => {
-    if (isAuthenticated && user) 
+    if (isAuthenticated && user)
       navigate(`/dashboard`);
   }, [isAuthenticated, navigate, user]);
 
-  return (
+  /* return (
     <main className="min-h-screen bg-gradient-to-tr from-slate-600/75 to-orange-800/70 flex items-center justify-center">
       <PrijavaForma authApi={authApi} />
     </main>
+  ); */
+  // PrijavaStranica
+  return (
+    <main className="min-h-screen bg-black flex items-center justify-center p-6">
+      <PrijavaForma authApi={authApi} />
+    </main>
   );
+
 }

@@ -24,7 +24,7 @@ const UpdateNoteForm = ({
   const { user, token } = useAuth();
   const [error, setError] = useState<string>("");
 
-  const handleChange = (
+  /* const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, files } = e.target as HTMLInputElement;
@@ -41,7 +41,31 @@ const UpdateNoteForm = ({
         [name]: value,
       }));
     }
-  };
+  }; */
+  const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target as HTMLInputElement;
+        setNotesData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const handleChangeImage = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const { files } = e.target as HTMLInputElement;
+        // generiše lokalni URL za izabranu sliku
+        if (files && files[0]) {
+            const imageUrl = URL.createObjectURL(files[0]);
+            console.log("imageUrl createObject: " + imageUrl);
+            setNotesData((prev) => ({
+                ...prev,
+                image_url: imageUrl,
+            }));
+        }
+
+    }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +95,7 @@ const UpdateNoteForm = ({
     }
   };
 
-  return (
+  /* return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md space-y-6">
         <h2 className="text-2xl font-semibold text-center text-blue-800">Izmeni belešku</h2>
@@ -126,6 +150,86 @@ const UpdateNoteForm = ({
           </button>
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
+      </form>
+    </div>
+  ); */
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-black text-white p-6">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-900 p-8 rounded-2xl shadow-lg w-full max-w-md space-y-6 border border-gray-700"
+      >
+        <h2 className="text-2xl font-bold text-center text-yellow-400">
+          Izmeni belešku
+        </h2>
+
+        <div>
+          <label className="block text-sm mb-2 text-gray-300">Title</label>
+          <input
+            type="text"
+            name="title"
+            value={notesData.title}
+            onChange={handleChange}
+            className="w-full p-3 bg-black text-white border border-gray-600 rounded-xl 
+                       focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm mb-2 text-gray-300">Content</label>
+          <textarea
+            value={notesData.content}
+            name="content"
+            onChange={handleChange}
+            className="w-full p-3 bg-black text-white border border-gray-600 rounded-xl 
+                       focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+            rows={5}
+          />
+        </div>
+
+        {user!.uloga === "admin" && (
+          <div>
+            <label className="block text-sm mb-2 text-gray-300">Izaberite sliku</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleChangeImage}
+              className="w-full text-gray-300"
+            />
+
+            {/* Preview izabrane slike */}
+            {/* {previewImage && (
+              <div className="mt-4">
+                <p className="text-gray-400 text-sm mb-2">Preview:</p>
+                <img
+                  src={previewImage}
+                  alt="Preview"
+                  className="w-full rounded-xl border border-gray-600 shadow-md"
+                />
+              </div>
+            )} */}
+          </div>
+        )}
+
+        <div className="flex justify-between gap-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 py-3 bg-gray-800 text-gray-200 rounded-xl 
+                       hover:bg-gray-700 transition shadow-md"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="flex-1 py-3 bg-yellow-400 text-black rounded-xl 
+                       hover:bg-yellow-500 transition shadow-md font-semibold"
+          >
+            Update
+          </button>
+        </div>
+
+        {error && <p className="text-sm text-red-500">{error}</p>}
       </form>
     </div>
   );
