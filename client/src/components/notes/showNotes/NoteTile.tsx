@@ -77,7 +77,7 @@ export const NoteTile: React.FC<NoteTileProps> = ({
       const response = await notesApi.shareNote(note.id, note, token!);
       if (response) {
         // response.data sadrži tvoj link
-        const link = `http://localhost:5173/share/${response.share_guid}`;
+        const link = `http://localhost:5173/shared/${response.share_guid}`;
         await navigator.clipboard.writeText(link);
         toast.success("Link kreiran i kopiran u clipboard!");
         // osveži note da bi share_guid bio setovan
