@@ -14,6 +14,8 @@ import { INoteService } from './Domain/services/notes/INoteService';
 import { NoteService } from './Services/notes/NoteService';
 import { NotesController } from './WebAPI/controllers/NotesController';
 
+import path from "path";
+
 require('dotenv').config();
 
 const app = express();
@@ -39,5 +41,11 @@ const notesController = new NotesController(notesService);
 app.use('/api/v1', authController.getRouter());
 app.use('/api/v1', userController.getRouter());
 app.use('/api/v1', notesController.getRouter());
+
+
+// putanja do pictures foldera (pretpostavimo da je van src foldera)
+const picturesPath = path.join(__dirname, "../pictures");
+// servira statički folder
+app.use("/pictures", express.static(picturesPath));
 
 export default app;

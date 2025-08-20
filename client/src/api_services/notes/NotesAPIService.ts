@@ -8,7 +8,7 @@ import { NoteDto } from "../../models/notes/NoteDto";
 const API_URL: string = import.meta.env.VITE_API_URL + "notes";
 
 export const notesApi: INotesAPIService = {
-    async createNote(note: NoteDto, token: string): Promise<NoteDto> {
+    /* async createNote(note: NoteDto, token: string): Promise<NoteDto> {
         try {
             const res = await axios.post<NoteData>(API_URL, note, {
                 headers: {
@@ -19,7 +19,29 @@ export const notesApi: INotesAPIService = {
         } catch {
             return new NoteDto();
         }
+    }, */
+    async createNote(note: NoteDto, file: File | null, token: string): Promise<NoteDto> {
+        try {
+            const formData = new FormData();
+            formData.append("title", note.title);
+            formData.append("content", note.content);
+            if (file) {
+                formData.append("image", file); // "image" je key koji multer očekuje
+            }
+
+            const res = await axios.post<NoteData>(API_URL, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data"
+                },
+            });
+
+            return res.data.data;
+        } catch {
+            return new NoteDto();
+        }
     },
+
     async getAllUserNotes(token: string): Promise<NoteDto[]> {
         try {
             const res = await axios.get(`${API_URL}`, {
@@ -68,21 +90,9 @@ export const notesApi: INotesAPIService = {
             return new NoteDto();
         }
     },
-    // async shareNote(id: number, token: string): Promise<string> {
-    //     try {
-    //         const res = await axios.put<ShareLinkData>(`${API_URL}/share/${id}`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-    //         return res.data.data;
-    //     } catch {
-    //         return "";
-    //     }
-    // },
-     async shareNote(id: number, note: NoteDto, token: string): Promise<NoteDto> {
+    async shareNote(id: number, note: NoteDto, token: string): Promise<NoteDto> {
         try {
-            const res = await axios.put<NoteData>(`${API_URL}/share/${id}`,note, {
+            const res = await axios.put<NoteData>(`${API_URL}/share/${id}`, note, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
