@@ -200,7 +200,7 @@ export const NoteTile: React.FC<NoteTileProps> = ({
       {/* Prikaz slike za admina */}
       {user?.uloga === "admin" && note.image_url && (
         <img
-          src={note.image_url}
+          src={`http://localhost:4000${note.image_url}`}
           alt="Note"
           className="w-full h-36 object-cover rounded-xl mb-3 border border-gray-700"
         />

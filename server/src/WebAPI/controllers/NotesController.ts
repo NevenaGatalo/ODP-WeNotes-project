@@ -4,6 +4,7 @@ import { authenticate } from "../../Middlewares/authentification/AuthMiddleware"
 import { ValidateNewNote } from "../validators/notes/NewNoteValidator";
 import { NoteDto } from "../../Domain/DTOs/notes/NoteDto";
 import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
+import { upload } from "../../Middlewares/multer/MulterMiddleware";
 
 export class NotesController {
   private router: Router;
@@ -15,7 +16,7 @@ export class NotesController {
     this.initializeRoutes();
   }
   private initializeRoutes(): void {
-    this.router.post('/notes', authenticate, this.create.bind(this));
+    this.router.post('/notes', authenticate, upload.single("image"), this.create.bind(this));
     this.router.get('/notes', authenticate, this.getAllUserNotes.bind(this));
     this.router.delete('/notes/:id', authenticate, this.delete.bind(this));
     this.router.put('/notes/:id', authenticate, this.update.bind(this));
@@ -32,20 +33,20 @@ export class NotesController {
     const { guid } = req.params;
 
     try {
-        // traži belešku po share_guid
-        const note = await this.notesService.getNoteByGuid(guid);
+      // traži belešku po share_guid
+      const note = await this.notesService.getNoteByGuid(guid);
 
-        if (note.id === 0) {
-            res.status(404).json({ success: false, message: 'Beleška nije pronađena' });
-            return;
-        }
+      if (note.id === 0) {
+        res.status(404).json({ success: false, message: 'Beleška nije pronađena' });
+        return;
+      }
 
-        // vrati sadržaj beleške
-        res.json({ success: true, message: "Beleska pronadjena", data: note });
+      // vrati sadržaj beleške
+      res.json({ success: true, message: "Beleska pronadjena", data: note });
     } catch (error) {
-        res.status(500).json({ success: false, message: String(error) });
+      res.status(500).json({ success: false, message: String(error) });
     }
-}
+  }
 
   /**
      * PUT /api/v1/notes/share/:id
@@ -87,7 +88,7 @@ export class NotesController {
   //     });
   //   }
   // }
-   public async share(req: Request, res: Response) {
+  public async share(req: Request, res: Response) {
     const noteId = Number(req.params.id);
     const ownerId = req.user!.id;
     const { title, content, image_url, is_pinned, owner_id, share_guid } = req.body;
@@ -105,7 +106,7 @@ export class NotesController {
         return;
       }
       //provera da li guid postoji
-      if(share_guid !== null && share_guid !== ""){
+      if (share_guid !== null && share_guid !== "") {
         res.status(403).json({ success: false, message: "Beleska vec ima share link." });
         return;
       }
@@ -259,7 +260,7 @@ export class NotesController {
         return;
       }
       //validacija da user ne sme da salje image_url
-      const finalImageUrl = req.user!.uloga === 'admin' ? image_url || null : null;
+      //const finalImageUrl = req.user!.uloga === 'admin' ? image_url || null : null;
       const ownerId = req.user!.id;
 
       //validacija user ne sme da kreira vise od 10 beleski
@@ -274,8 +275,19 @@ export class NotesController {
           return;
         }
       }
+      let finalImageUrl: string | null = null;
+      if (req.user!.uloga === 'admin') {
+        if (req.file) {
+          finalImageUrl = `/pictures/${req.file.filename}`;
+        }
+      }
+      //ako je korisnik uloge user poslao image_url postavi ga na prazan string jer on ne sme
+      //da postavlja slike u notes
+      else{
+        finalImageUrl = "";
+      }
 
-      const noteDto = new NoteDto(0, title, content, finalImageUrl, false, ownerId);
+      const noteDto = new NoteDto(0, title, content, finalImageUrl ?? "", false, ownerId);
       const createdNote = await this.notesService.createNote(noteDto);
 
       if (createdNote.id !== 0) {
