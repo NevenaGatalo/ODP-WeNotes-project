@@ -33,7 +33,7 @@ export const NoteTile: React.FC<NoteTileProps> = ({
       const success = await notesApi.deleteNote(note.id, token!);
       if (success) {
         onDelete(note.id);
-        toast.success("Pitanje obrisano!");
+        toast.success("Beleska je obrisana.");
       } else {
         toast.error("Greška prilikom brisanja.");
       }
