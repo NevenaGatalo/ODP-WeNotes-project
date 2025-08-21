@@ -49,20 +49,20 @@ export default function SharedNotePage() {
     </div>
   ); */
   return (
-  <div className="min-h-screen bg-black flex justify-center items-center p-6">
-    <div className="max-w-lg w-full p-6 bg-gray-900 rounded-2xl shadow-lg border border-gray-700 text-white">
-      <h1 className="text-2xl font-bold mb-4 text-yellow-400">{note.title}</h1>
-      <p className="mb-4">{note.content}</p>
-      {note.image_url && (
-        <img
-          src={note.image_url}
-          alt="Note"
-          className="w-full h-auto rounded-xl border border-gray-600 shadow-md mb-4"
-        />
-      )}
+    <div className="min-h-screen bg-black flex justify-center items-center p-6">
+      <div className="max-w-lg w-full p-6 bg-gray-900 rounded-2xl shadow-lg border border-gray-700 text-white">
+        <h1 className="text-2xl font-bold mb-4 text-yellow-400">{note.title}</h1>
+        <p className="mb-4">{note.content}</p>
+        {note.image_url && (
+            <img
+              src={`http://localhost:4000${note.image_url}`}
+              alt="Note"
+              className="w-full h-auto rounded-xl border border-gray-600 shadow-md mb-4"
+            />
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 
 
 }
