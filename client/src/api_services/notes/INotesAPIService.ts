@@ -3,7 +3,6 @@ import type { NoteDto } from "../../models/notes/NoteDto";
 
 
 export interface INotesAPIService {
-    //createNote(note: NoteDto, token: string): Promise<NoteDto>;
     createNote(note: NoteDto, file: File | null, token: string): Promise<NoteDto>;
     getAllUserNotes(token: string): Promise<NoteDto[]>;
     deleteNote(id: number, token: string): Promise<boolean>;

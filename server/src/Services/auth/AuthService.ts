@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 export class AuthService implements IAuthService {
   private readonly saltRounds: number = parseInt(process.env.SALT_ROUNDS || "10", 10);
 
-  public constructor(private userRepository: IUserRepository) {}
+  public constructor(private userRepository: IUserRepository) { }
 
   async prijava(korisnickoIme: string, lozinka: string): Promise<UserAuthDataDto> {
     const user = await this.userRepository.getByUsername(korisnickoIme);
@@ -21,7 +21,7 @@ export class AuthService implements IAuthService {
 
   async registracija(korisnickoIme: string, uloga: string, lozinka: string): Promise<UserAuthDataDto> {
     const existingUser = await this.userRepository.getByUsername(korisnickoIme);
-    
+
     if (existingUser.id !== 0) {
       return new UserAuthDataDto(); // Korisnik već postoji
     }

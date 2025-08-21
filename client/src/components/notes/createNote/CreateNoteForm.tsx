@@ -32,27 +32,6 @@ const CreateNoteForm = ({
             [name]: value,
         }));
     };
-    /* const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { files } = e.target;
-        if (files && files[0]) {
-            const reader = new FileReader();
-            reader.readAsDataURL(files[0]); // pretvara fajl u Base64 string
-            reader.onloadend = () => {
-                if (reader.result && typeof reader.result === "string") {
-                    const base64String = reader.result
-                        .replace('data:', '')
-                        .replace(/^.+,/, '');
-                    console.log("base64 string: " + base64String);
-
-                    setNotesData(prev => ({
-                        ...prev,
-                        image_url: base64String
-                    }));
-                }
-
-            };
-        }
-    }; */
     const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = e.target;
         if (files && files[0]) {
@@ -67,7 +46,6 @@ const CreateNoteForm = ({
         }
     };
 
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const validation = ValidateNewNote(
@@ -79,7 +57,6 @@ const CreateNoteForm = ({
             setError(validation.poruka ?? "");
             return;
         }
-
         try {
             await notesApi.createNote(
                 new NoteDto(0, notesData.title, notesData.content, notesData.image_url),
@@ -88,7 +65,7 @@ const CreateNoteForm = ({
             );
             toast.success("Beleska dodata");
 
-            setNotesData({ title: "", content: "", image_url: "", imageFile: null});
+            setNotesData({ title: "", content: "", image_url: "", imageFile: null });
             setError("");
             if (!token) {
                 toast.error("Token ne postoji.");
@@ -101,67 +78,6 @@ const CreateNoteForm = ({
             toast.error("Greska prilikom kreiranja beleske");
         }
     };
-
-    /* return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md space-y-6">
-                <h2 className="text-2xl font-semibold text-center text-blue-800">Kreiraj novu belešku</h2>
-
-                <div>
-                    <label className="block text-gray-700 mb-2">Title</label>
-                    <input
-                        type="text"
-                        name="title"
-                        value={notesData.title}
-                        onChange={handleChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                        placeholder="Unesite naslov beleške"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-gray-700 mb-2">Content</label>
-                    <textarea
-                        value={notesData.content}
-                        name="content"
-                        onChange={handleChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
-                        rows={5}
-                        placeholder="Unesite sadržaj beleške"
-                    />
-                </div>
-
-                {user!.uloga === "admin" && (
-                    <div>
-                        <label className="block text-gray-700 mb-2">Izaberite sliku</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleChangeImage}
-                            className="w-full text-gray-700"
-                        />
-                    </div>
-                )}
-
-                <div className="flex justify-between gap-4">
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        className="flex-1 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="flex-1 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition"
-                    >
-                        Create
-                    </button>
-                </div>
-                {error && <p className="text-sm text-red-600">{error}</p>}
-            </form>
-        </div>
-    ); */
     return (
         <div className="flex justify-center items-center min-h-screen bg-black text-white p-6">
             <form

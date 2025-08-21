@@ -8,18 +8,6 @@ import { NoteDto } from "../../models/notes/NoteDto";
 const API_URL: string = import.meta.env.VITE_API_URL + "notes";
 
 export const notesApi: INotesAPIService = {
-    /* async createNote(note: NoteDto, token: string): Promise<NoteDto> {
-        try {
-            const res = await axios.post<NoteData>(API_URL, note, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            return res.data.data;
-        } catch {
-            return new NoteDto();
-        }
-    }, */
     async createNote(note: NoteDto, file: File | null, token: string): Promise<NoteDto> {
         try {
             const formData = new FormData();

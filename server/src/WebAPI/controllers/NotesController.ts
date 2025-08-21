@@ -3,7 +3,6 @@ import { INoteService } from "../../Domain/services/notes/INoteService";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { ValidateNewNote } from "../validators/notes/NewNoteValidator";
 import { NoteDto } from "../../Domain/DTOs/notes/NoteDto";
-import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 import { upload } from "../../Middlewares/multer/MulterMiddleware";
 
 export class NotesController {
@@ -48,46 +47,6 @@ export class NotesController {
     }
   }
 
-  /**
-     * PUT /api/v1/notes/share/:id
-     * Pravi link za deljenje postojece beleske
-     */
-  // public async share(req: Request, res: Response) {
-  //   const noteId = Number(req.params.id);
-  //   const ownerId = req.user!.id;
-  //   try {
-
-  //     if (!noteId) {
-  //       res.status(400).json({ success: false, message: "ID beleške je obavezan." });
-  //       return;
-  //     }
-  //     //provera da li se deli beleska trenutno ulogovanog korisnika
-  //     const noteForSharing = await this.notesService.getNoteById(noteId);
-  //     if (noteForSharing.owner_id !== ownerId) {
-  //       res.status(403).json({ success: false, message: "Beleska ne pripada korisniku." });
-  //       return;
-  //     }
-  //     //provera da li guid postoji
-  //     if(noteForSharing.share_guid !== null && noteForSharing.share_guid !== ""){
-  //       res.status(403).json({ success: false, message: "Beleska vec ima share link." });
-  //       return;
-  //     }
-
-  //     const guid = await this.notesService.shareNote(noteId);
-  //     if (!guid) {
-  //       res.status(500).json({ success: false, message: 'Greska pri kreiranju share linka' });
-  //       return;
-  //     }
-
-  //     //res.status(200).json({ success: true, message: "Uspesno kreiran link", data: `http://localhost:4000/api/v1/notes/share/${guid}` });
-  //     res.status(200).json({ success: true, message: "Uspesno kreiran link", data: note });
-  //   } catch (error) {
-  //     res.status(500).json({
-  //       success: false,
-  //       message: error instanceof Error ? error.message : String(error)
-  //     });
-  //   }
-  // }
   public async share(req: Request, res: Response) {
     const noteId = Number(req.params.id);
     const ownerId = req.user!.id;
@@ -118,7 +77,6 @@ export class NotesController {
         return;
       }
 
-      //res.status(200).json({ success: true, message: "Uspesno kreiran link", data: `http://localhost:4000/api/v1/notes/share/${guid}` });
       res.status(200).json({ success: true, message: "Uspesno kreiran link", data: updatedNote });
     } catch (error) {
       res.status(500).json({
@@ -259,8 +217,6 @@ export class NotesController {
         res.status(400).json({ success: false, message: 'Naslov i beleska su obavezna polja za unos.' });
         return;
       }
-      //validacija da user ne sme da salje image_url
-      //const finalImageUrl = req.user!.uloga === 'admin' ? image_url || null : null;
       const ownerId = req.user!.id;
 
       //validacija user ne sme da kreira vise od 10 beleski
@@ -275,6 +231,7 @@ export class NotesController {
           return;
         }
       }
+      //validacija da user ne sme da salje image_url
       let finalImageUrl: string | null = null;
       if (req.user!.uloga === 'admin') {
         if (req.file) {
@@ -283,7 +240,7 @@ export class NotesController {
       }
       //ako je korisnik uloge user poslao image_url postavi ga na prazan string jer on ne sme
       //da postavlja slike u notes
-      else{
+      else {
         finalImageUrl = "";
       }
 

@@ -1,10 +1,9 @@
-// NoteTile.tsx
 import React from "react";
 import type { NoteDto } from "../../../models/notes/NoteDto";
 import { notesApi } from "../../../api_services/notes/NotesAPIService";
 import toast from "react-hot-toast";
 import { useAuth } from "../../../hooks/auth/useAuthHook";
-import { Pin, PinOff, Copy, Share2, Trash2, Edit, CopyCheck, Files } from "lucide-react";
+import { Pin, PinOff, Copy, Share2, Trash2, Edit, Files } from "lucide-react";
 
 
 interface NoteTileProps {
@@ -73,7 +72,6 @@ export const NoteTile: React.FC<NoteTileProps> = ({
         toast.error("Token ne postoji.");
         return;
       }
-
       const response = await notesApi.shareNote(note.id, note, token!);
       if (response) {
         // response.data sadrži tvoj link
@@ -114,71 +112,6 @@ export const NoteTile: React.FC<NoteTileProps> = ({
   const handleUpdate = async () => {
     onUpdateNote(note);
   }
-
-  // return (
-  //   <div className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between">
-  //     note tile
-  //     <div className="flex justify-between items-start mb-2">
-  //       <h3 className="text-lg font-semibold">{note.title}</h3>
-  //       <button
-  //         onClick={handlePin}
-  //         className={`text-sm px-2 py-1 rounded ${note.is_pinned ? "bg-yellow-400 text-white" : "bg-gray-200"
-  //           }`}
-  //       >
-  //         {note.is_pinned ? "Pinned" : "Pin"}
-  //       </button>
-  //     </div>
-
-  //     <p className="text-gray-700 mb-2">{note.content}</p>
-
-  //     {/* Prikaz slike samo za admina */}
-  //     {user?.uloga === "admin" && note.image_url && (
-  //       <img
-  //         src={note.image_url}
-  //         alt="Note"
-  //         className="w-full h-32 object-cover rounded mb-2"
-  //       />
-  //     )}
-
-  //     <div className="flex justify-between mt-2">
-  //       <button
-  //         onClick={handleDuplicate}
-  //         className="text-sm bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-  //       >
-  //         Duplicate
-  //       </button>
-
-  //       <button
-  //         onClick={handleUpdate}
-  //         className="text-sm bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-600"
-  //       >
-  //         Update
-  //       </button>
-
-  //       {!note.share_guid ? (
-  //         <button
-  //           onClick={handleShare}
-  //           className="text-sm bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-  //         >
-  //           Share
-  //         </button>
-  //       ) : (
-  //         <button
-  //           onClick={handleCopyLink}
-  //           className="text-sm bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-600"
-  //         >
-  //           Copy Link
-  //         </button>
-  //       )}
-  //       <button
-  //         onClick={handleDelete}
-  //         className="text-sm bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-  //       >
-  //         Delete
-  //       </button>
-  //     </div>
-  //   </div>
-  // );
 
   return (
     <div className="bg-gray-900 rounded-2xl shadow-lg p-4 flex flex-col justify-between border border-gray-800 hover:border-yellow-400 transition">

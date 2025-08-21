@@ -8,27 +8,20 @@ export class NoteService implements INoteService {
     constructor(private notesRepository: INotesRepository) { }
     async getNoteByGuid(guid: string): Promise<NoteDto> {
         const note = await this.notesRepository.findByGuid(guid);
-        if(!note.id){
+        if (!note.id) {
             return new NoteDto();
         }
         return new NoteDto(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id, note.share_guid);
 
     }
-    // async shareNote(id: number): Promise<string | null> {
-    //     const guid = uuidv4(); // generiše jedinstveni GUID
-        
-    //     const success = await this.notesRepository.updateGuid(id, guid);
-    //     if (success) return guid;
-    //     return null;
-    // }
     async shareNote(note: NoteDto): Promise<NoteDto> {
         const guid = uuidv4(); // generiše jedinstveni GUID
-        
+
         const updatedNote = await this.notesRepository.updateGuid(
             new Note(note.id, note.title, note.content, note.image_url, note.is_pinned, note.owner_id, guid)
         );
         return new NoteDto(updatedNote.id, updatedNote.title, updatedNote.content, updatedNote.image_url, updatedNote.is_pinned, updatedNote.owner_id, updatedNote.share_guid);
-        
+
     }
     async getNoteById(id: number): Promise<NoteDto> {
         const note = await this.notesRepository.getById(id);
@@ -53,7 +46,6 @@ export class NoteService implements INoteService {
 
         return new NoteDto(newNote.id, newNote.title, newNote.content, newNote.image_url, newNote.is_pinned, newNote.owner_id);
     }
-
 
     async updateNote(note: NoteDto): Promise<NoteDto> {
         const updatedNote = await this.notesRepository.update(

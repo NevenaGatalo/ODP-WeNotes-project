@@ -50,48 +50,10 @@ export default function NotesGridPage({ notesApi }: NotesGridPageProps) {
         logout();
     };
 
-    /*  return (
-         <main>
-             {editingNote ? (
-                 <UpdateNoteForm
-                     note={editingNote}
-                     notesApi={notesApi}
-                     onRefreshNotes={setNotes}
-                     onCancel={() => setEditingNote(null)}
-                 />
-             ) : showCreateForm ? (
-                 <CreateNoteForm
-                     notesApi={notesApi}
-                     onRefreshNotes={setNotes}
-                     onCancel={() => setShowCreateForm(false)}
-                 />
-             ) : (
-                 <>
-                     <button
-                         onClick={() => setShowCreateForm(true)}
-                         className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-                     >
-                         ➕ Nova beleška
-                     </button>
- 
-                     <NotesGrid
-                         notes={notes}
-                         setNotes={setNotes}
-                         onUpdateNote={(note) => setEditingNote(note)}
-                     />
- 
-                     <button onClick={handleLogout}>Logout</button>
-                 </>
-             )}
-         </main>
- 
-     ) */
     return (
         <main className="min-h-screen bg-black text-white p-6">
 
-
             {editingNote ? (
-
                 <UpdateNoteForm
                     note={editingNote}
                     notesApi={notesApi}

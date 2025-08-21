@@ -43,7 +43,7 @@ app.use('/api/v1', userController.getRouter());
 app.use('/api/v1', notesController.getRouter());
 
 
-// putanja do pictures foldera (pretpostavimo da je van src foldera)
+// putanja do pictures foldera
 const picturesPath = path.join(__dirname, "../pictures");
 // servira statički folder
 app.use("/pictures", express.static(picturesPath));

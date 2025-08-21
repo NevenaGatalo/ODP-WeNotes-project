@@ -7,10 +7,7 @@ import { authApi } from "./api_services/auth/AuthAPIService";
 import { ProtectedRoute } from "./components/protected_route/ProtectedRoute";
 import PrijavaStranica from "./pages/auth/PrijavaStranica";
 import RegistracijaStranica from "./pages/auth/RegistracijaStranica";
-//import KontrolnaTablaUserStranica from "./pages/kontrolna_tabla/KontrolnaTablaUserStranica";
-import KontrolnaTablaAdminStranica from "./pages/kontrolna_tabla/KontrolnaTablaAdminStranica";
 import NotFoundStranica from "./pages/not_found/NotFoundPage";
-import { usersApi } from "./api_services/users/UsersAPIService";
 import NotesGridPage from "./pages/notes/NotesGridPage";
 import { notesApi } from "./api_services/notes/NotesAPIService";
 import { Toaster } from "react-hot-toast";
@@ -30,9 +27,6 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute  requiredRole={["user", "admin"]}>
-              {/* <--umesto ove komponente treba da se prikaze nasa komponenta sa svim beleskama--> */}
-              {/* <KontrolnaTablaUserStranica /> */}
-
               <NotesGridPage notesApi={notesApi} />
             </ProtectedRoute>
           }

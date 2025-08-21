@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 
-
 //provera da li korisnik ima dozvolu da pristupi određenoj ruti na osnovu svoje uloge
 //prima listu dozvoljenih uloga i pretvara ih u niz dozvoljene uloge
 export const authorize = (...dozvoljeneUloge: string[]) => {

@@ -4,7 +4,7 @@ import { IUserRepository } from "../../Domain/repositories/users/IUserRepository
 import { IUserService } from "../../Domain/services/users/IUserService";
 
 export class UserService implements IUserService {
-  public constructor(private userRepository: IUserRepository) {}
+  public constructor(private userRepository: IUserRepository) { }
 
   async getSviKorisnici(): Promise<UserDto[]> {
     const korisnici: User[] = await this.userRepository.getAll();

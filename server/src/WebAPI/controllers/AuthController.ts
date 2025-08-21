@@ -44,21 +44,21 @@ export class AuthController {
       if (result.id !== 0) {
         // Kreiranje jwt tokena
         const token = jwt.sign(
-          { 
-            id: result.id, 
-            korisnickoIme: result.korisnickoIme, 
+          {
+            id: result.id,
+            korisnickoIme: result.korisnickoIme,
             uloga: result.uloga,
           }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
 
-        res.status(200).json({success: true, message: 'Uspešna prijava', data: token});
+        res.status(200).json({ success: true, message: 'Uspešna prijava', data: token });
         return;
       } else {
-        res.status(401).json({success: false, message: 'Неисправно корисничко име или лозинка'});
+        res.status(401).json({ success: false, message: 'Неисправно корисничко име или лозинка' });
         return;
       }
     } catch (error) {
       console.log(error);
-      res.status(500).json({success: false, message: error});
+      res.status(500).json({ success: false, message: error });
     }
   }
 
@@ -79,24 +79,24 @@ export class AuthController {
       const result = await this.authService.registracija(korisnickoIme, uloga, lozinka);
 
       console.log("Rezultat registracije: " + result);
-      
+
       // Proveravamo da li je registracija uspešna
       if (result.id !== 0) {
         // Kreiranje jwt tokena
         const token = jwt.sign(
-          { 
-            id: result.id, 
-            korisnickoIme: result.korisnickoIme, 
+          {
+            id: result.id,
+            korisnickoIme: result.korisnickoIme,
             uloga: result.uloga,
           }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
 
         //token se salje klijentu i klijent ga cuva
-        res.status(201).json({success: true, message: 'Uspešna registracija', data: token});
+        res.status(201).json({ success: true, message: 'Uspešna registracija', data: token });
       } else {
-        res.status(401).json({success: false, message: 'Регистрација није успела. Корисничко име већ постоји.', });
+        res.status(401).json({ success: false, message: 'Registracija nije uspela. Korisnicko ime vec postoji.', });
       }
     } catch (error) {
-      res.status(500).json({success: false, message: error});
+      res.status(500).json({ success: false, message: error });
     }
   }
 

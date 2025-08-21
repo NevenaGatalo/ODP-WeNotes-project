@@ -35,19 +35,6 @@ export default function SharedNotePage() {
   if (error) return <p className="text-red-500">{error}</p>;
   if (!note) return <p>Nema podataka za prikaz.</p>;
 
-  /* return (
-    <div className="max-w-lg mx-auto mt-8 p-4 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">{note.title}</h1>
-      <p className="mb-4">{note.content}</p>
-      {note.image_url && (
-        <img
-          src={note.image_url}
-          alt="Note"
-          className="w-full h-auto rounded mb-4"
-        />
-      )}
-    </div>
-  ); */
   return (
     <div className="min-h-screen bg-black flex justify-center items-center p-6">
       <div className="max-w-lg w-full p-6 bg-gray-900 rounded-2xl shadow-lg border border-gray-700 text-white">

@@ -2,7 +2,6 @@ import { INotesRepository } from "../../../Domain/repositories/notes/INotesRepos
 import { Note } from "../../../Domain/models/Note";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
-import { NoteDto } from "../../../Domain/DTOs/notes/NoteDto";
 
 export class NotesRepository implements INotesRepository {
     async findByGuid(guid: string): Promise<Note> {
@@ -35,20 +34,7 @@ export class NotesRepository implements INotesRepository {
             return new Note();
         }
     }
-    // async updateGuid(id: number, guid: string): Promise<boolean> {
-    //     try {
-    //         const query = `UPDATE notes SET share_guid = ? WHERE id = ?`;
-    //         const [result] = await db.execute<ResultSetHeader>(query, [guid, id]);
-
-    //         if (result.affectedRows > 0) {
-    //             return true;
-    //         }
-    //         return false;
-    //     } catch (error) {
-    //         return false;
-    //     }
-    // }
-     async updateGuid(note: Note): Promise<Note> {
+    async updateGuid(note: Note): Promise<Note> {
         try {
             const query = `UPDATE notes SET share_guid = ? WHERE id = ?`;
             const [result] = await db.execute<ResultSetHeader>(query, [note.share_guid, note.id]);
@@ -98,7 +84,6 @@ export class NotesRepository implements INotesRepository {
         INSERT INTO notes (id, title, content, image_url, is_pinned, owner_id) 
         VALUES (?, ?, ?, ?, ?, ?)
       `;
-
             const [result] = await db.execute<ResultSetHeader>(query, [
                 note.id,
                 note.title,
@@ -107,8 +92,6 @@ export class NotesRepository implements INotesRepository {
                 note.is_pinned,
                 note.owner_id
             ]);
-
-
             if (result.insertId) {
                 return new Note(result.insertId, note.title, note.content, note.image_url, note.is_pinned, note.owner_id);
             }
