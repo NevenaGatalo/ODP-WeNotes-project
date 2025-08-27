@@ -82,7 +82,7 @@ const UpdateNoteForm = ({
         className="bg-gray-900 p-8 rounded-2xl shadow-lg w-full max-w-md space-y-6 border border-gray-700"
       >
         <h2 className="text-2xl font-bold text-center text-yellow-400">
-          Izmeni belešku
+          Edit note
         </h2>
 
         <div>
@@ -111,25 +111,12 @@ const UpdateNoteForm = ({
 
         {user!.uloga === "admin" && (
           <div>
-            <label className="block text-sm mb-2 text-gray-300">Izaberite sliku</label>
             <input
               type="file"
               accept="image/*"
               onChange={handleChangeImage}
               className="w-full text-gray-300"
             />
-
-            {/* Preview izabrane slike */}
-            {/* {previewImage && (
-              <div className="mt-4">
-                <p className="text-gray-400 text-sm mb-2">Preview:</p>
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  className="w-full rounded-xl border border-gray-600 shadow-md"
-                />
-              </div>
-            )} */}
           </div>
         )}
 

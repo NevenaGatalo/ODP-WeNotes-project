@@ -16,7 +16,7 @@ export function PrijavaForma({ authApi }: AuthFormProps) {
 
     const validacija = validacijaPodatakaAuth(korisnickoIme, lozinka);
     if (!validacija.uspesno) {
-      setGreska(validacija.poruka ?? "Неисправни подаци");
+      setGreska(validacija.poruka ?? "Neispravni podaci");
       return;
     }
 

@@ -58,12 +58,15 @@ const CreateNoteForm = ({
             return;
         }
         try {
-            await notesApi.createNote(
+            const createdNote = await notesApi.createNote(
                 new NoteDto(0, notesData.title, notesData.content, notesData.image_url),
                 notesData.imageFile,
                 token!
             );
-            toast.success("Beleska dodata");
+            if (createdNote && createdNote.id !== 0)
+                toast.success("Beleska dodata");
+            else
+                toast.error("Imate vec 10 kreiranih beleski.");
 
             setNotesData({ title: "", content: "", image_url: "", imageFile: null });
             setError("");
@@ -85,7 +88,7 @@ const CreateNoteForm = ({
                 className="bg-gray-900 p-8 rounded-2xl shadow-lg w-full max-w-md space-y-6 border border-gray-700"
             >
                 <h2 className="text-2xl font-bold text-center text-yellow-400">
-                    Kreiraj novu belešku
+                    Create new note
                 </h2>
 
                 <div>
@@ -97,7 +100,7 @@ const CreateNoteForm = ({
                         onChange={handleChange}
                         className="w-full p-3 bg-black text-white border border-gray-600 rounded-xl 
                      focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                        placeholder="Unesite naslov beleške"
+                        placeholder="Note title"
                     />
                 </div>
 
@@ -110,13 +113,12 @@ const CreateNoteForm = ({
                         className="w-full p-3 bg-black text-white border border-gray-600 rounded-xl 
                      focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
                         rows={5}
-                        placeholder="Unesite sadržaj beleške"
+                        placeholder="Note content"
                     />
                 </div>
 
                 {user!.uloga === "admin" && (
                     <div>
-                        <label className="block text-sm mb-2 text-gray-300">Izaberite sliku</label>
                         <input
                             type="file"
                             accept="image/*"

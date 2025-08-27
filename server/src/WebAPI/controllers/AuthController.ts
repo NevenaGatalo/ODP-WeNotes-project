@@ -53,7 +53,7 @@ export class AuthController {
         res.status(200).json({ success: true, message: 'Uspešna prijava', data: token });
         return;
       } else {
-        res.status(401).json({ success: false, message: 'Неисправно корисничко име или лозинка' });
+        res.status(401).json({ success: false, message: 'Neispravno korisnicko ime ili lozinka' });
         return;
       }
     } catch (error) {
